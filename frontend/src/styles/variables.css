@@ -1,0 +1,96 @@
+:root {
+  /* Brand — blue gradient primary (ecommerce-style CTAs use --gradient-primary) */
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-light: #dbeafe;
+  --color-accent: #0ea5e9;
+
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+  --gradient-primary-soft: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+
+  /* Neutrals */
+  --color-bg: #ffffff;
+  --color-surface: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #ffffff;
+
+  /* Semantic — kept distinct from the blue brand color on purpose:
+     green = success/verified/unlocked, red = danger, amber = warning */
+  --color-success: #16a34a;
+  --color-success-dark: #15803d;
+  --color-success-light: #dcfce7;
+
+  --color-warning: #d97706;
+  --color-warning-dark: #92400e;
+  --color-warning-light: #fef3c7;
+
+  --color-danger: #dc2626;
+  --color-danger-dark: #b91c1c;
+  --color-danger-light: #fee2e2;
+  --color-danger-border: rgba(220, 38, 38, 0.35);
+  --gradient-danger: linear-gradient(135deg, #f87171 0%, #b91c1c 100%);
+  --gradient-danger-hover: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+
+  --color-info: #0ea5e9;
+  --color-info-dark: #075985;
+  --color-info-light: #e0f2fe;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.75rem;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+  --space-10: 64px;
+
+  /* Radius & shadow */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 72px;
+  --transition: 180ms ease;
+}
+
+[data-theme='dark'] {
+  --color-bg: #0b1120;
+  --color-surface: #111827;
+  --color-border: #1f2937;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-primary-light: #1e3a8a;
+}
+
+/* Shared dark-navy tokens for surfaces that are always dark regardless of
+   the global theme toggle (hero sections, admin console, etc.) — kept as a
+   fixed set so every "always-dark" panel on the site draws from the exact
+   same blue/navy palette instead of inventing its own shade. */
+:root {
+  --color-navy-bg: #0b1120;
+  --color-navy-surface: #111827;
+  --color-navy-surface-raised: #1a2436;
+  --color-navy-border: rgba(37, 99, 235, 0.18);
+  --color-navy-border-strong: rgba(37, 99, 235, 0.32);
+  --color-navy-text: #f1f5f9;
+  --color-navy-muted: #94a3b8;
+}

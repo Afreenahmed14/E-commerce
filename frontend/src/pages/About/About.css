@@ -1,0 +1,24 @@
+.about-page h1 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-4);
+}
+
+.about-intro {
+  max-width: 760px;
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-8);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-5);
+}
+
+.about-card {
+  padding: var(--space-5);
+}
+
+.about-card h3 {
+  margin-bottom: var(--space-3);
+}

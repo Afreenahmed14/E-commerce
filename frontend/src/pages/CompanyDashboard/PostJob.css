@@ -1,0 +1,107 @@
+.post-job-page {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* Hero — small gradient eyebrow + heading, mirrors the marketing pages'
+   voice instead of a bare dashboard <h1>. */
+.post-job-hero {
+  margin-bottom: var(--space-5);
+}
+
+.post-job-eyebrow {
+  display: inline-block;
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  background: var(--gradient-primary-soft);
+  color: var(--color-primary-dark);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+
+.post-job-hero h1 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-2xl);
+}
+
+.post-job-card {
+  padding: 0;
+  overflow: hidden;
+  border-top: 3px solid transparent;
+  border-image: var(--gradient-primary) 1;
+}
+
+.post-job-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each logical group (basics / pay / location / openings) gets its own
+   card-within-a-card feel via a divider + heading, instead of one long
+   undifferentiated column of fields. */
+.post-job-section {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.post-job-section + .post-job-section {
+  border-top: 1px solid var(--color-border);
+}
+
+.post-job-section-title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+}
+
+.post-job-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.post-job-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+}
+
+/* Sticky submit bar on mobile so the CTA is always reachable without
+   scrolling back up through a long multi-section form. */
+.post-job-submit-bar {
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 640px) {
+  .post-job-page {
+    max-width: 100%;
+  }
+
+  .post-job-hero h1 {
+    font-size: var(--font-size-xl);
+  }
+
+  .post-job-section {
+    padding: var(--space-4);
+  }
+
+  .post-job-submit-bar {
+    position: sticky;
+    bottom: 0;
+    padding: var(--space-3) var(--space-4);
+    box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.06);
+  }
+}

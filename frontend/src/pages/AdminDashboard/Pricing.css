@@ -1,0 +1,104 @@
+.admin-pricing-page {
+  max-width: 960px;
+}
+
+.admin-pricing-hero {
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  background: var(--gradient-primary-soft);
+  border: 1px solid var(--color-primary-light);
+}
+
+.admin-pricing-hero h1 {
+  margin: 0 0 var(--space-2);
+}
+
+.admin-pricing-hero p {
+  margin: 0;
+  max-width: 620px;
+}
+
+/* One card per category (product) so it's visually obvious each is priced
+   independently — no shared "monthly/yearly" pair implying they're locked
+   together. */
+.admin-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.admin-pricing-category {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border-top: 3px solid transparent;
+  border-image: var(--gradient-primary) 1;
+}
+
+.admin-pricing-category-header h2 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-lg);
+}
+
+.admin-pricing-category-header p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.admin-pricing-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.admin-pricing-tier {
+  margin-bottom: 0;
+}
+
+.admin-pricing-tier-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.admin-pricing-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.admin-pricing-saved {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.admin-pricing-error {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+/* --- Mobile --- */
+@media (max-width: 640px) {
+  .admin-pricing-hero {
+    padding: var(--space-4);
+  }
+
+  .admin-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-pricing-actions {
+    position: sticky;
+    bottom: 0;
+    background: var(--color-bg);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .admin-pricing-actions .btn {
+    flex: 1;
+  }
+}

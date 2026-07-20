@@ -1,0 +1,50 @@
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.notification-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  align-items: flex-start;
+}
+
+.notification-unread {
+  border-left: 3px solid var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.notification-icon {
+  color: var(--color-primary);
+  margin-top: 2px;
+}
+
+.notification-body {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+}
+
+.notification-time {
+  font-size: var(--font-size-xs);
+}
+
+.notification-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.notification-actions button {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  padding: var(--space-1);
+}
+
+.notification-actions button:hover {
+  color: var(--color-primary);
+}

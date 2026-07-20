@@ -1,0 +1,523 @@
+.browse-page {
+  background: linear-gradient(180deg, #eef2fc 0%, #f5f7fd 100%);
+  width: 100%;
+}
+
+.browse-page-inner {
+  max-width: 1440px;
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
+
+.browse-page h1 {
+  font-size: var(--font-size-2xl);
+}
+
+.browse-subtitle {
+  margin-bottom: var(--space-6);
+  max-width: 640px;
+}
+
+.browse-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filter-search-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+  flex: 1 1 320px;
+  min-width: 200px;
+  background: var(--color-bg);
+}
+
+.filter-search-inline input {
+  border: none;
+  outline: none;
+  flex: 1;
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.filter-toggle-pill {
+  border-radius: var(--radius-md);
+}
+
+.filter-group {
+  margin-bottom: 0;
+}
+
+.filter-group label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.filter-group input[type="text"],
+.filter-group input[type="number"],
+.filter-group select {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.filter-range {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.filter-range input {
+  width: 50%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.filter-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.filter-option {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.filter-option:hover {
+  background: var(--color-surface);
+}
+
+.filter-option.is-selected {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+/* ---------- Top quick bar: one search box + developer-type dropdown ---------- */
+.browse-quickbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.browse-main-search {
+  flex: 1 1 auto;
+}
+
+.browse-quickbar > .filter-dropdown {
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .browse-quickbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ---------- Unified panel: filter row + toolbar + result cards ---------- */
+.browse-panel {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .browse-panel {
+    padding: var(--space-4);
+  }
+}
+
+/* ---------- Row 2: name search + Developer Type / Filters / Sort ---------- */
+.browse-filterbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.browse-name-search {
+  flex: 1 1 auto;
+}
+
+.browse-filterbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .browse-filterbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .browse-filterbar-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------- Toolbar: results count + single Filters popup + Sort ---------- */
+.browse-shell {
+  display: flex;
+  flex-direction: column;
+}
+
+.browse-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.browse-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.browse-results-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* Content shown inside the Filters modal body */
+.filters-popup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.sidebar-filter-group {
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-filter-group:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.sidebar-filter-group label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+
+.sidebar-option-list {
+  max-height: none;
+  overflow: visible;
+}
+
+.filter-option-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.filter-option-row .filter-option {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.sidebar-remote-toggle {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Only this panel scrolls — the toolbar and Filters button above stay put,
+   just like the product list panel on Amazon/Flipkart. */
+.browse-card-scroll {
+  max-height: calc(100vh - 320px);
+  min-height: 320px;
+  overflow-y: auto;
+  padding-right: var(--space-2);
+}
+
+@media (max-width: 900px) {
+  .browse-card-scroll {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  .browse-quickbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .browse-toolbar {
+    flex-wrap: wrap;
+  }
+}
+
+.candidate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.candidate-card-link {
+  display: block;
+}
+
+.candidate-card {
+  padding: var(--space-6) var(--space-5);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: relative;
+}
+
+.candidate-bookmark-btn {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  z-index: 2;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.candidate-bookmark-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.candidate-bookmark-btn.is-bookmarked {
+  color: var(--color-text-inverse);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.candidate-card-header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.candidate-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.candidate-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.candidate-name-row h3 {
+  margin: 0;
+}
+
+.candidate-availability-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+.candidate-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--color-primary-light);
+}
+
+.candidate-card-header h3 {
+  font-size: var(--font-size-base);
+}
+
+.candidate-headline {
+  font-size: var(--font-size-xs);
+  margin-top: 2px;
+}
+
+.candidate-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+}
+
+.candidate-about {
+  font-size: var(--font-size-sm);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.candidate-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-height: 30px;
+  align-content: flex-start;
+}
+
+.candidate-skills .badge-skill {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  padding: 5px var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.candidate-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.candidate-rate {
+  font-weight: 800;
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+}
+
+.candidate-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+}
+
+.candidate-rating-value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.candidate-rating-value svg {
+  color: #f59e0b;
+  fill: #f59e0b;
+}
+
+.candidate-experience-label {
+  margin-left: auto;
+}
+
+.candidate-unlock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  transition: background var(--transition);
+}
+
+.candidate-unlock-btn:hover {
+  background: #cfe0fc;
+}
+
+@media (max-width: 640px) {
+  .browse-filter-bar {
+    gap: var(--space-2);
+  }
+
+  .filter-search-inline {
+    flex: 1 1 100%;
+  }
+
+  .filter-pill {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Second inline search box (by name) — same look as the skill/headline
+   search, just narrower so both fit comfortably in the filter bar. */
+.filter-search-name {
+  min-width: 200px;
+}
+
+.active-skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-5);
+}
+
+.active-skill-chip button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.active-skill-chip button:hover {
+  opacity: 1;
+}

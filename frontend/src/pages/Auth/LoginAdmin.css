@@ -1,0 +1,256 @@
+/* ------------------------------------------------------------------ */
+/* Admin login — "access console" theme.                              */
+/* Deliberately distinct from the candidate/company auth pages: dark, */
+/* quiet, and procedural — this is a door, not a welcome mat.         */
+/* ------------------------------------------------------------------ */
+
+.admin-console {
+  --ac-bg: var(--color-navy-bg);
+  --ac-surface: var(--color-navy-surface);
+  --ac-border: var(--color-navy-border);
+  --ac-border-strong: var(--color-navy-border-strong);
+  --ac-cyan: var(--color-primary);
+  --ac-brand: var(--color-primary);
+  --ac-text: var(--color-navy-text);
+  --ac-muted: var(--color-navy-muted);
+  --ac-live: var(--color-success);
+  --ac-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-5);
+  background:
+    radial-gradient(circle at 1px 1px, rgba(37, 99, 235, 0.14) 1px, transparent 0) 0 0 / 28px 28px,
+    var(--ac-bg);
+  color: var(--ac-text);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft vignette so the dot-grid fades toward the edges rather than
+   cutting off hard. */
+.admin-console::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, var(--ac-bg) 78%);
+  pointer-events: none;
+}
+
+.admin-console-frame {
+  position: relative;
+  width: 100%;
+  max-width: 408px;
+}
+
+.admin-console-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  font-family: var(--ac-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ac-cyan);
+}
+
+.admin-console-badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+.admin-console-card {
+  position: relative;
+  background: var(--ac-surface);
+  border: 1px solid var(--ac-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-6) var(--space-6);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* Signature element: a single scan line sweeps down across the card
+   border on load, then rests — a nod to "access granted" terminals
+   without turning the whole page into an animation. */
+.admin-console-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ac-cyan), transparent);
+  animation: ac-scan 1.8s ease-out 1;
+}
+
+@keyframes ac-scan {
+  0%   { top: 0; opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.admin-console-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+}
+
+.admin-console-logo-chip {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 12px 28px rgba(56, 189, 248, 0.08);
+}
+
+.admin-console-logo-chip img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+.admin-console-card h1 {
+  text-align: center;
+  font-size: var(--font-size-xl);
+  color: var(--ac-text);
+  margin-bottom: var(--space-2);
+}
+
+.admin-console-subtitle {
+  text-align: center;
+  color: var(--ac-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-6);
+}
+
+.admin-console-card .form-label {
+  color: var(--ac-muted);
+  font-size: var(--font-size-sm);
+}
+
+.admin-console-card .form-input {
+  background: var(--color-navy-bg);
+  border: 1px solid var(--ac-border-strong);
+  color: var(--ac-text);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.admin-console-card .form-input::placeholder {
+  color: var(--ac-muted);
+  opacity: 0.7;
+}
+
+.admin-console-card .form-input:focus {
+  border-color: var(--ac-cyan);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
+  outline: none;
+}
+
+.admin-console-card .form-input-error {
+  border-color: var(--color-danger);
+}
+
+.admin-console-card .btn-primary {
+  background: var(--gradient-primary);
+  border: none;
+}
+
+.admin-console-card .btn-primary:hover:not(:disabled) {
+  background: var(--gradient-primary-hover);
+}
+
+.admin-console-error {
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid var(--color-danger-border);
+  color: var(--color-danger-light);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+}
+
+/* Firebase alt sign-in block sits inside the same dark card, so retune
+   its (otherwise light-theme) divider/text colors locally. */
+.admin-console-card .firebase-auth-divider {
+  color: var(--ac-muted);
+}
+
+.admin-console-card .firebase-auth-divider::before,
+.admin-console-card .firebase-auth-divider::after {
+  border-color: var(--ac-border-strong);
+}
+
+.admin-console-card .btn-secondary {
+  background: var(--color-navy-surface-raised);
+  border: 1px solid var(--ac-border-strong);
+  color: var(--ac-text);
+}
+
+.admin-console-card .btn-secondary:hover:not(:disabled) {
+  background: var(--color-navy-surface);
+  border-color: var(--color-primary);
+}
+
+.admin-console-card .firebase-auth-note {
+  color: var(--ac-muted);
+}
+
+/* Footer status line — the "this is being logged" reassurance/warning,
+   styled like a system status readout rather than a legal disclaimer. */
+.admin-console-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+  font-family: var(--ac-mono);
+  font-size: 11px;
+  color: var(--ac-muted);
+  letter-spacing: 0.02em;
+}
+
+.admin-console-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ac-live);
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  animation: ac-pulse 2.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ac-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+  70%  { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+.admin-console-back {
+  display: block;
+  text-align: center;
+  margin-top: var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--ac-muted);
+}
+
+.admin-console-back a {
+  color: var(--ac-cyan);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-console-card::after {
+    animation: none;
+    display: none;
+  }
+
+  .admin-console-status-dot {
+    animation: none;
+  }
+}

@@ -1,0 +1,33 @@
+.pricing-page {
+  max-width: 1080px;
+}
+
+.pricing-header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.pricing-header h1 {
+  margin-bottom: var(--space-2);
+}
+
+.pricing-grid {
+  margin-bottom: var(--space-5);
+}
+
+.pricing-footnote {
+  text-align: center;
+}
+
+.pricing-product-section {
+  margin-bottom: var(--space-8);
+}
+
+.pricing-product-header {
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.pricing-product-header h2 {
+  margin-bottom: var(--space-1);
+}

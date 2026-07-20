@@ -1,0 +1,138 @@
+.job-details-page {
+  max-width: 800px;
+}
+
+.job-details-card {
+  padding: var(--space-5);
+  border-top: 3px solid transparent;
+  border-image: var(--gradient-primary) 1;
+}
+
+.job-details-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.job-details-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--color-bg-secondary);
+  flex-shrink: 0;
+}
+
+.job-details-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.job-details-heading h1 {
+  margin: 0;
+  width: 100%;
+}
+
+.job-details-company {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.job-details-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.job-details-meta span { display: inline-flex; align-items: center; gap: 4px; text-transform: capitalize; }
+
+.job-details-salary {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: var(--space-2);
+}
+
+.job-details-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.job-details-description {
+  white-space: pre-wrap;
+  margin-bottom: var(--space-5);
+  line-height: 1.6;
+}
+
+.job-details-actions {
+  display: flex;
+}
+
+.job-details-actions .btn {
+  min-width: 200px;
+}
+
+.job-apply-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.job-apply-textarea {
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+/* --- Mobile --- */
+@media (max-width: 640px) {
+  .job-details-card {
+    padding: var(--space-4);
+  }
+
+  .job-details-header {
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .job-details-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .job-details-heading h1 {
+    font-size: var(--font-size-lg);
+  }
+
+  .job-details-meta {
+    gap: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Turns the Apply button into a full-width, always-reachable bottom bar
+     on mobile instead of a button the person has to scroll all the way
+     down through the description to find. */
+  .job-details-actions {
+    position: sticky;
+    bottom: 0;
+    margin: 0 calc(var(--space-4) * -1) calc(var(--space-4) * -1);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.06);
+  }
+
+  .job-details-actions .btn {
+    min-width: 0;
+    width: 100%;
+  }
+}

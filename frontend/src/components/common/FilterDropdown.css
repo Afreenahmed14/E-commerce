@@ -1,0 +1,222 @@
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.filter-pill:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-pill.is-active {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  background: var(--color-primary-light);
+}
+
+.filter-pill.is-open {
+  border-color: var(--color-primary);
+}
+
+.filter-pill-label {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.filter-pill-summary {
+  font-weight: 700;
+}
+
+.filter-pill-caret {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform var(--transition);
+}
+
+.filter-pill-caret.is-open {
+  transform: rotate(180deg);
+}
+
+.filter-pill-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  opacity: 0.7;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.filter-pill-clear:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.filter-dropdown-panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  min-width: 240px;
+  max-width: min(320px, calc(100vw - var(--space-6)));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-4);
+  z-index: 30;
+}
+
+/* On narrow screens a panel anchored under its trigger can run off the
+   edge of the screen depending on where that pill landed after wrapping.
+   Anchoring it to the viewport as a bottom sheet instead — the same
+   pattern Flipkart's own mobile filters use — sidesteps that entirely. */
+@media (max-width: 640px) {
+  .filter-dropdown-panel {
+    position: fixed;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-4);
+    top: auto;
+    max-width: none;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+
+/* ---------- Centered modal variant (FilterDropdown modal={true}) ---------- */
+.filter-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 50;
+  animation: filter-modal-fade-in 0.15s ease-out;
+}
+
+@keyframes filter-modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.filter-modal-panel {
+  display: flex;
+  flex-direction: column;
+  width: 420px;
+  max-width: 100%;
+  max-height: min(720px, calc(100vh - var(--space-8)));
+  background: var(--color-bg);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 24px 60px -12px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+  animation: filter-modal-pop-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes filter-modal-pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.filter-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.filter-modal-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.filter-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.filter-modal-close:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.filter-modal-body {
+  padding: var(--space-5);
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.filter-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+  background: var(--color-surface);
+}
+
+.filter-modal-clear {
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-1);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.filter-modal-clear:hover {
+  color: var(--color-primary-dark);
+}
+
+.filter-modal-apply {
+  margin-left: auto;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.filter-modal-apply:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiSearch, FiEye, FiCreditCard, FiPhone, FiCheckCircle, FiArrowRight, FiBarChart2, FiTrendingUp, FiDollarSign } from 'react-icons/fi';
+import { FiSearch, FiEye, FiCreditCard, FiPhone, FiCheckCircle, FiArrowRight, FiLock, FiShield, FiStar } from 'react-icons/fi';
 import { SiReact, SiNodedotjs, SiMongodb, SiPython, SiDocker, SiFigma } from 'react-icons/si';
 import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
@@ -9,7 +9,6 @@ import { statsService } from '../../services/statsService';
 import { gsap, prefersReducedMotion } from '../../utils/gsapSetup';
 import { useScrollReveal } from '../../utils/gsapHooks';
 import './Home.css';
-import { FaRupeeSign } from "react-icons/fa";
 
 const STEPS = [
   { icon: FiSearch, title: 'Search Engineers', desc: 'Filter by skill, rate, availability, location and more to find the right fit.' },
@@ -27,6 +26,20 @@ const BENEFITS = [
 
 const TEASER_TECH = [SiReact, SiNodedotjs, SiMongodb, SiPython, SiDocker, SiFigma];
 
+function StatCircle({ value, label, delayClass }) {
+  return (
+    <div className="stat-pill">
+      <div className={`stat-circle ${delayClass || ''}`}>
+        <div className="stat-circle-ring" />
+        <div className="stat-circle-content">
+          <div className="stat-pill-value"><CountUpValue value={value} />+</div>
+          <div className="stat-pill-label">{label}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const heroRef = useRef(null);
   const stepsRef = useScrollReveal('.step-card');
@@ -40,22 +53,12 @@ export default function Home() {
       .catch(() => setStats(null));
   }, []);
 
-  // Hero entrance: a GSAP timeline gives finer control than plain CSS —
-  // the blobs drift in behind the text, then headline/subtitle/CTAs cascade
-  // in with a slight overlap for a punchier first impression.
   useEffect(() => {
     if (prefersReducedMotion() || !heroRef.current) return;
 
-    // See Technologies.jsx for why this uses gsap.context()+revert() rather
-    // than a bare timeline+kill(): under React 18 StrictMode's double-mount
-    // in development, killing a `.from()` timeline mid-tween leaves elements
-    // frozen at their in-progress inline styles (e.g. opacity: 0), and the
-    // next `.from()` call would capture that frozen state as its own target,
-    // leaving the hero content invisible for good. `ctx.revert()` cleans up
-    // fully so every mount starts from the real CSS state.
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tl.from(heroRef.current.querySelectorAll('.hero-visual-card'), {
+      tl.from(heroRef.current.querySelectorAll('.unlock-card-stack, .unlock-chip'), {
         opacity: 0,
         y: 30,
         scale: 0.85,
@@ -80,7 +83,21 @@ export default function Home() {
       <section className="hero" ref={heroRef}>
         <div className="container hero-inner">
           <div className="hero-content">
-            <h1>Hire Skilled Engineers <span className="hero-highlight">On  Hourly Basis</span></h1>
+            <h1>
+              Hire Skilled Engineers{' '}
+              <span className="hero-highlight-wrap">
+                <span className="hero-highlight">On Hourly Basis</span>
+                <svg className="hero-highlight-underline" viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M3 11 C 70 3, 130 15, 180 8 S 260 3, 297 9" stroke="url(#heroUnderlineGrad)" />
+                  {/* <defs>
+                    <linearGradient id="heroUnderlineGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="var(--color-primary)" />
+                      <stop offset="100%" stopColor="var(--color-primary-dark)" />
+                    </linearGradient>
+                  </defs> */}
+                </svg>
+              </span>
+            </h1>
             <p className="hero-subtitle">
               Search Verified Engineers, View Their Profiles and Unlock Contact Details Instantly.
             </p>
@@ -94,17 +111,41 @@ export default function Home() {
           </div>
 
           <div className="hero-visual" aria-hidden="true">
-            <div className="hero-visual-card hero-visual-card-1">
-              <FiBarChart2 size={26} />
-              <span>Analysis</span>
-            </div>
-            <div className="hero-visual-card hero-visual-card-2">
-              <FiTrendingUp size={26} />
-              <span>Growth Phase</span>
-            </div>
-            <div className="hero-visual-card hero-visual-card-3">
-              <FaRupeeSign size={26} />
-              <span>Profit</span>
+            <div className="unlock-scene">
+              <div className="unlock-glow" />
+
+              <div className="unlock-chip unlock-chip-verified">
+                <FiShield size={14} /> Verified
+              </div>
+
+              <div className="unlock-card-stack">
+                <div className="unlock-card-back" />
+                <div className="unlock-card">
+                  <div className="unlock-card-top">
+                    <div className="unlock-card-avatar">HR</div>
+                    <div>
+                      <div className="unlock-card-name" />
+                      <div className="unlock-card-role">Engineer</div>
+                    </div>
+                  </div>
+                  <div className="unlock-card-rating">
+                    <FiStar size={13} /> 4.9 <span>· 6 yrs exp</span>
+                  </div>
+                  <div className="unlock-card-skills">
+                    <span className="unlock-skill-tag">Node.js</span>
+                    <span className="unlock-skill-tag">MongoDB</span>
+                  </div>
+                  <div className="unlock-card-row">
+                    <FiLock size={15} />
+                    <span className="unlock-digits">+91 98••• •••42</span>
+                    <div className="unlock-ping" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="unlock-chip unlock-chip-rate">
+                <FiCreditCard size={14} /> <strong>PAY ₹</strong>/hr
+              </div>
             </div>
           </div>
         </div>
@@ -113,32 +154,26 @@ export default function Home() {
       {stats && (
         <section className="stats-bar">
           <div className="container stats-bar-inner">
-            <div className="stat-pill">
-              <div className="stat-pill-value"><CountUpValue value={stats.totalCandidates} />+</div>
-              <div className="stat-pill-label">Verified Engineers</div>
-            </div>
-            <div className="stat-pill">
-              <div className="stat-pill-value"><CountUpValue value={stats.totalCompanies} />+</div>
-              <div className="stat-pill-label">Hiring Companies</div>
-            </div>
-            <div className="stat-pill">
-              <div className="stat-pill-value"><CountUpValue value={stats.totalUnlocks} />+</div>
-              <div className="stat-pill-label">Contacts Unlocked</div>
-            </div>
+            <StatCircle value={stats.totalCandidates} label="Verified Engineers" />
+            <StatCircle value={stats.totalCompanies} label="Hiring Companies" delayClass="stat-circle-delay1" />
+            <StatCircle value={stats.totalUnlocks} label="Contacts Unlocked" delayClass="stat-circle-delay2" />
           </div>
         </section>
       )}
-      <section className="container section">
-        <h2 className="section-title text-center">How It Works</h2>
-        <div className="steps-grid" ref={stepsRef}>
-          {STEPS.map(({ icon: Icon, title, desc }, i) => (
-            <Card key={title} hoverable className="step-card">
-              <div className="step-number">{i + 1}</div>
-              <Icon size={28} className="step-icon" />
-              <h3>{title}</h3>
-              <p className="text-muted">{desc}</p>
-            </Card>
-          ))}
+
+      <section className="container_section">
+        <div className="how_section">
+          <h2 className="section-title text-center">How It Works</h2>
+          <div className="steps-grid" ref={stepsRef}>
+            {STEPS.map(({ icon: Icon, title, desc }, i) => (
+              <Card key={title} hoverable className="step-card">
+                <div className="step-number">{i + 1}</div>
+                <Icon size={28} className="step-icon" />
+                <h3>{title}</h3>
+                <p className="text-muted">{desc}</p>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 

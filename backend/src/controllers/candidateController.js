@@ -166,10 +166,16 @@ const searchCandidates = asyncHandler(async (req, res) => {
   if (q) filter.$text = { $search: q };
   // Legacy "Developer Type" groups filter by a hardcoded skills list; newer
   // admin-added types have no such list and filter by the developerType
-  // field the candidate/admin set directly. Support both, OR'd together,
-  // so either matching strategy works depending on which the frontend sends.
+  // field the candidate/admin set directly. `developerType` takes priority
+  // when a candidate has explicitly set one — the skills list is only a
+  // fallback for candidates who never set developerType at all. Plain OR'ing
+  // these (as before) let generic overlapping skills (e.g. "JavaScript") leak
+  // candidates of a *different* actual developer type into the results.
   if (skill && developerType) {
-    filter.$or = [{ skills: { $in: [].concat(skill) } }, { developerType }];
+    filter.$or = [
+      { developerType },
+      { developerType: '', skills: { $in: [].concat(skill) } },
+    ];
   } else if (skill) {
     filter.skills = { $in: [].concat(skill) };
   } else if (developerType) {

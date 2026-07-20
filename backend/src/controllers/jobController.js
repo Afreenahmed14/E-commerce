@@ -3,16 +3,33 @@ const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 const Job = require('../models/Job');
 const Application = require('../models/Application');
+const { PRODUCTS, QUOTA_KEYS, getQuota } = require('../constants/plans');
+const { consumeQuota } = require('../utils/quota');
+const { ensureSubscriptionFresh } = require('./subscriptionController');
+const MESSAGES = require('../constants/messages');
 
 /**
  * POST /api/v1/jobs
- * Company creates a job posting.
+ * Company creates a job posting. Gated by the company's JOB_POSTS quota
+ * for their current subscription tier (see constants/plans.js).
  */
 const createJob = asyncHandler(async (req, res) => {
   const {
     title, description, jobType, developerType, skills,
     experienceMin, experienceMax, payType, salaryMin, salaryMax, location, openings,
   } = req.body;
+
+  await ensureSubscriptionFresh(req.user);
+  const sub = req.user.subscription || {};
+  const quota = getQuota(PRODUCTS.COMPANY, sub.tier, QUOTA_KEYS.JOB_POSTS);
+  const usage = (sub.usage && sub.usage[QUOTA_KEYS.JOB_POSTS]) || [];
+  const result = consumeQuota(usage, quota);
+  if (!result.allowed) {
+    throw new ApiError(402, MESSAGES.SUBSCRIPTION.QUOTA_JOB_POSTS_REACHED, ['SUBSCRIPTION_REQUIRED']);
+  }
+  req.user.subscription.usage = req.user.subscription.usage || {};
+  req.user.subscription.usage[QUOTA_KEYS.JOB_POSTS] = result.prunedTimestamps;
+  await req.user.save();
 
   const job = await Job.create({
     companyId: req.user._id,

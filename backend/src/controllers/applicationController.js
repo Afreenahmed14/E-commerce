@@ -4,11 +4,19 @@ const ApiResponse = require('../utils/ApiResponse');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
 const Notification = require('../models/Notification');
+const { PRODUCTS, QUOTA_KEYS, getQuota } = require('../constants/plans');
+const { consumeQuota } = require('../utils/quota');
+const { ensureSubscriptionFresh } = require('./subscriptionController');
+const MESSAGES = require('../constants/messages');
 
 /**
  * POST /api/v1/applications
  * body: { jobId, coverLetter }
  * Candidate applies to an open job. One application per (job, candidate).
+ * Gated by the candidate's JOB_APPLICATIONS quota for their current
+ * subscription tier (see constants/plans.js). A candidate may be on either
+ * CANDIDATE_BASIC or CANDIDATE_PRO — both define this quota, so we read
+ * whichever product the account is actually subscribed to.
  */
 const applyToJob = asyncHandler(async (req, res) => {
   const { jobId, coverLetter } = req.body;
@@ -19,6 +27,19 @@ const applyToJob = asyncHandler(async (req, res) => {
 
   const existing = await Application.findOne({ jobId, candidateId: req.user._id });
   if (existing) throw ApiError.conflict('You have already applied to this job');
+
+  await ensureSubscriptionFresh(req.user);
+  const sub = req.user.subscription || {};
+  const product = sub.product || PRODUCTS.CANDIDATE_BASIC;
+  const quota = getQuota(product, sub.tier, QUOTA_KEYS.JOB_APPLICATIONS);
+  const usage = (sub.usage && sub.usage[QUOTA_KEYS.JOB_APPLICATIONS]) || [];
+  const result = consumeQuota(usage, quota);
+  if (!result.allowed) {
+    throw new ApiError(402, MESSAGES.SUBSCRIPTION.QUOTA_JOB_APPLICATIONS_REACHED, ['SUBSCRIPTION_REQUIRED']);
+  }
+  req.user.subscription.usage = req.user.subscription.usage || {};
+  req.user.subscription.usage[QUOTA_KEYS.JOB_APPLICATIONS] = result.prunedTimestamps;
+  await req.user.save();
 
   const application = await Application.create({
     jobId,

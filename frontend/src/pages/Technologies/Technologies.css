@@ -4,11 +4,11 @@
     radial-gradient(circle at 88% 92%, rgba(14, 165, 233, 0.06), transparent 40%);
 }
 
-.tech-header {
+.container-section-tech-header {
   text-align: center;
-  max-width: 640px;
+  
   margin: 0 auto;
-  padding-top: var(--space-8);
+  padding: var(--space-8);
 }
 
 .tech-header h1 {

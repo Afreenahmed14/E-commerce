@@ -73,15 +73,14 @@ export default function BrowseJobs() {
   if (role === 'company') return <Navigate to="/company/dashboard/jobs" replace />;
 
   return (
-    <div className="container section browse-jobs-page">
+    <div className="container-section-browse-jobs-page">
       <div className="browse-jobs-hero">
-        <h1>Browse Jobs</h1>
-        <p className="text-muted browse-subtitle">
+        
+        {/* <p className="text-muted browse-subtitle">
           Search full-time, part-time, contract, and internship openings posted by companies on the platform.
-        </p>
-      </div>
-
-      <div className="jobs-filterbar">
+        </p> */}
+        <div className="jobs-filterbar">
+          <h1>Browse Jobs</h1>
         <div className="filter-search-inline">
           <FiSearch />
           <input
@@ -98,6 +97,9 @@ export default function BrowseJobs() {
           {developerTypes.map((d) => <option key={d._id} value={d.name}>{d.name}</option>)}
         </select>
       </div>
+      </div>
+
+      
 
       <p className="text-muted jobs-results-count">
         {loading ? 'Searching…' : `${pagination.total ?? jobs.length} job${(pagination.total ?? jobs.length) === 1 ? '' : 's'} found`}

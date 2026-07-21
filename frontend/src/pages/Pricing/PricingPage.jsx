@@ -54,7 +54,7 @@ export default function PricingPage() {
   const products = Object.values(PRODUCTS).map((id) => catalog[id]).filter(Boolean);
 
   return (
-    <div className="container section pricing-page">
+    <div className="container-section-pricing-page">
       <div className="pricing-header">
         <h1>Simple, transparent pricing</h1>
         <p className="text-muted">

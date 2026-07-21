@@ -111,7 +111,7 @@ export default function Technologies() {
 
   return (
     <div className="tech-page">
-      <div className="container section tech-header">
+      <div className="container-section-tech-header">
         <h1>Our Technology Stack</h1>
         <p className="text-muted">
           HourlyRecruit's engineer network covers the full range of modern

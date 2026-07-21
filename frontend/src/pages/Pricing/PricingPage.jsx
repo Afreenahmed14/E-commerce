@@ -97,9 +97,7 @@ export default function PricingPage() {
         </div>
       ))}
 
-      <p className="text-muted pricing-footnote">
-        Cancel any time from your Subscription page — you'll fall back to the Free plan immediately.
-      </p>
+      
 
       {isGatedRole && (
         <SubscriptionModal open={modalOpen} onClose={() => setModalOpen(false)} />

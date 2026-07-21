@@ -13,4 +13,6 @@ export const companyService = {
   getBookmarks: () => api.get('/companies/me/bookmarks').then((r) => r.data),
   bookmarkCandidate: (candidateId) => api.post(`/companies/me/bookmarks/${candidateId}`).then((r) => r.data),
   removeBookmark: (candidateId) => api.delete(`/companies/me/bookmarks/${candidateId}`).then((r) => r.data),
+  // Every candidate this company has hired, most recent first.
+  getHires: () => api.get('/companies/me/hires').then((r) => r.data),
 };

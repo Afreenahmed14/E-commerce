@@ -4,11 +4,19 @@ const ApiResponse = require('../utils/ApiResponse');
 const Candidate = require('../models/Candidate');
 const Notification = require('../models/Notification');
 const ProfileView = require('../models/ProfileView');
+const ContactUnlock = require('../models/ContactUnlock');
 const { replaceFile } = require('../helpers/uploadHelper');
-const { VISIBILITY } = require('../constants/status');
-const { getPlan, PRODUCTS, TIERS } = require('../constants/plans');
+const { VISIBILITY, HIRER_TYPE, UNLOCK_STATUS } = require('../constants/status');
+const {
+  getPlan, PRODUCTS, TIERS, isPaidTier,
+} = require('../constants/plans');
 const { ensureSubscriptionFresh } = require('./subscriptionController');
 const MESSAGES = require('../constants/messages');
+
+/** True only for a genuinely active, currently-paid-for subscription — a
+ * Free tier's default status of 'active' does NOT count, since Free never
+ * expires and is not itself a purchase. Mirrors hireController's check. */
+const hasActivePaidPlan = (sub) => isPaidTier(sub?.tier) && sub?.status === 'active';
 
 /** Fields that must never leave the server on a public-facing candidate document. */
 const PUBLIC_EXCLUDE = '-__v -password -resetPasswordToken -resetPasswordExpires -tokenVersion -email -phone';
@@ -266,10 +274,17 @@ const getCandidateById = asyncHandler(async (req, res) => {
   const hasValidPlan = viewerSub.tier === TIERS.FREE || viewerSub.status === 'active';
   const socialLocked = !isOwner && !hasValidPlan;
 
+  // Full-profile access (and, further down, the ability to hire) requires
+  // a genuinely active PAID plan — Free/trial accounts only ever see the
+  // limited teaser built below, regardless of viewer type:
+  //   - a Company on the Free tier (no paid subscription yet), or
+  //   - a fellow Candidate without the Candidate + Project Partner product.
   // ensureSubscriptionFresh above already drops an expired paid plan back
-  // to the free fallback product, so a bare product === CANDIDATE_PRO check
-  // is enough — no separate expiry check needed here.
-  const profileLocked = isCandidateHirer && viewerSub.product !== PRODUCTS.CANDIDATE_PRO;
+  // to the free fallback product/tier, so these checks don't need a
+  // separate expiry check of their own.
+  const companyProfileLocked = isCompanyViewer && !hasActivePaidPlan(viewerSub);
+  const candidateHirerProfileLocked = isCandidateHirer && viewerSub.product !== PRODUCTS.CANDIDATE_PRO;
+  const profileLocked = companyProfileLocked || candidateHirerProfileLocked;
 
   // Profile browsing itself is no longer quota-limited by plan (the new
   // catalog gates job applications / interview calls / hires / project
@@ -278,7 +293,7 @@ const getCandidateById = asyncHandler(async (req, res) => {
   // your profile" notification below — only for viewers who actually got
   // to see the full profile.
   let isNewProfileView = false;
-  const grantedFullView = isCompanyViewer || (isCandidateHirer && !profileLocked);
+  const grantedFullView = (isCompanyViewer || isCandidateHirer) && !profileLocked;
   if (!isOwner && grantedFullView) {
     const alreadyViewed = await ProfileView.exists({ candidateId: candidate._id, viewerId: req.user._id });
     isNewProfileView = !alreadyViewed;
@@ -289,21 +304,19 @@ const getCandidateById = asyncHandler(async (req, res) => {
     delete candidate.linkedin;
   }
 
-  // A locked-out candidate viewer gets a directory-style teaser only — no
-  // bio, projects, education, resume, or social/contact-adjacent links.
+  // A locked-out viewer (Free-plan company, or a candidate without the
+  // Project Partner product) gets only name, about, and skills — no
+  // headline, rate, location, rating, projects, education, resume, or
+  // social/contact-adjacent links. Everything else requires upgrading.
   let responseCandidate = candidate;
   if (profileLocked) {
     responseCandidate = {
       _id: candidate._id,
       name: candidate.name,
-      headline: candidate.headline,
       profileImage: candidate.profileImage,
-      location: candidate.location,
-      rating: candidate.rating,
-      reviewsCount: candidate.reviewsCount,
-      verificationStatus: candidate.verificationStatus,
-      hourlyRate: candidate.hourlyRate,
+      about: candidate.about,
       primarySkills: candidate.primarySkills,
+      secondarySkills: candidate.secondarySkills,
       skills: candidate.skills,
     };
   }
@@ -332,7 +345,32 @@ const getCandidateById = asyncHandler(async (req, res) => {
     }
   }
 
-  return new ApiResponse(200, { candidate: responseCandidate, socialLocked, profileLocked }, 'Candidate fetched').send(res);
+  // Tells the frontend which Hire button (if any) to render, and whether
+  // this viewer has already hired this candidate — so the button can show
+  // "Hired on <date>" instead of letting them hire (and pay a quota slot)
+  // twice.
+  let hire = null;
+  if (isCompanyViewer) {
+    const existing = await ContactUnlock.findOne({
+      hirerType: HIRER_TYPE.COMPANY,
+      companyId: req.user._id,
+      candidateId: candidate._id,
+      status: UNLOCK_STATUS.ACTIVE,
+    }).lean();
+    hire = { role: 'company', alreadyHired: !!existing, hiredAt: existing ? existing.unlockDate : null };
+  } else if (isCandidateHirer) {
+    const existing = await ContactUnlock.findOne({
+      hirerType: HIRER_TYPE.CANDIDATE,
+      hiringCandidateId: req.user._id,
+      candidateId: candidate._id,
+      status: UNLOCK_STATUS.ACTIVE,
+    }).lean();
+    hire = { role: 'project-partner', alreadyHired: !!existing, hiredAt: existing ? existing.unlockDate : null };
+  }
+
+  return new ApiResponse(200, {
+    candidate: responseCandidate, socialLocked, profileLocked, hire,
+  }, 'Candidate fetched').send(res);
 });
 
 module.exports = {

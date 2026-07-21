@@ -1,18 +1,18 @@
 .site-footer {
   background: linear-gradient(180deg, #0a1730 0%, #060e21 100%);
   color: #aebede;
-  padding-top: var(--space-8);
+  padding-top: var(--space-0);
 }
 
 .footer-inner {
-  padding-bottom: var(--space-6);
+  padding-bottom: var(--space-2);
 }
 
 .footer-top {
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr;
   gap: var(--space-8);
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-2);
 }
 
 /* Brand block */
@@ -100,6 +100,13 @@
 }
 
 /* Link columns */
+
+.footer-col{
+  display: flex;
+  flex-direction: column;
+  padding-top: 15%;
+}
+
 .footer-col-title {
   font-size: 12px;
   font-weight: 700;
@@ -133,7 +140,7 @@
 .footer-bottom {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
   gap: var(--space-3);
   padding-top: var(--space-5);

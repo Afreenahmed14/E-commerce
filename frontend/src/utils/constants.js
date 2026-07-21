@@ -110,7 +110,11 @@ export const SUBSCRIPTION_CATALOG = {
         name: 'Free',
         price: 0,
         period: null,
-        features: ['Post up to 3 jobs every 2 weeks', 'Hire up to 6 candidates per week'],
+        features: [
+          'Post up to 3 jobs every 2 weeks',
+          'Browse engineer name, about & skills',
+          'Upgrade to view full profiles and hire',
+        ],
       },
       {
         id: TIERS.MONTHLY,

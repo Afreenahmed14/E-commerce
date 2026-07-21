@@ -28,11 +28,13 @@ import CandidateOverview from './pages/CandidateDashboard/Overview';
 import CandidateEditProfile from './pages/CandidateDashboard/EditProfile';
 import CandidateNotifications from './pages/CandidateDashboard/Notifications';
 import MyApplications from './pages/CandidateDashboard/MyApplications';
+import CandidateHires from './pages/CandidateDashboard/Hires';
 import SubscriptionPage from './pages/Subscription/SubscriptionPage';
 
 import CompanyOverview from './pages/CompanyDashboard/Overview';
 import CompanyEditProfile from './pages/CompanyDashboard/EditProfile';
 import CompanyBookmarks from './pages/CompanyDashboard/Bookmarks';
+import CompanyHires from './pages/CompanyDashboard/Hires';
 import CompanyNotifications from './pages/CompanyDashboard/Notifications';
 import MyJobs from './pages/CompanyDashboard/MyJobs';
 import PostJob from './pages/CompanyDashboard/PostJob';
@@ -84,6 +86,7 @@ export default function App() {
           <Route path="profile" element={<CandidateEditProfile />} />
           <Route path="subscription" element={<SubscriptionPage />} />
           <Route path="applications" element={<MyApplications />} />
+          <Route path="hires" element={<CandidateHires />} />
           <Route path="notifications" element={<CandidateNotifications />} />
         </Route>
       </Route>
@@ -99,6 +102,7 @@ export default function App() {
           <Route path="jobs/new" element={<PostJob />} />
           <Route path="jobs/:id/edit" element={<PostJob />} />
           <Route path="jobs/:jobId/applicants" element={<JobApplicants />} />
+          <Route path="hires" element={<CompanyHires />} />
           <Route path="notifications" element={<CompanyNotifications />} />
         </Route>
       </Route>

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import {
   FiGrid, FiUser, FiBookmark, FiBell, FiUsers,
   FiBriefcase, FiShield, FiTag, FiStar, FiLogOut, FiMenu, FiX, FiAward, FiSettings, FiFileText,
+  FiCheckCircle,
 } from 'react-icons/fi';
 import { useAuth } from '../../hooks/useAuth';
 import HourlyRatePrompt from '../candidate/HourlyRatePrompt';
@@ -19,6 +20,7 @@ const NAV_CONFIG = {
     { to: '/browse', label: 'Find Project Partners', icon: FiUsers },
     { to: '/jobs', label: 'Browse Jobs', icon: FiFileText },
     { to: '/candidate/dashboard/applications', label: 'My Applications', icon: FiBriefcase },
+    { to: '/candidate/dashboard/hires', label: 'My Hires', icon: FiCheckCircle },
     { to: '/candidate/dashboard/notifications', label: 'Notifications', icon: FiBell },
   ],
   company: [
@@ -28,6 +30,7 @@ const NAV_CONFIG = {
     { to: '/company/dashboard/profile', label: 'Company Profile', icon: FiBriefcase },
     { to: '/company/dashboard/subscription', label: 'Subscription', icon: FiAward },
     { to: '/company/dashboard/bookmarks', label: 'Bookmarked', icon: FiBookmark },
+    { to: '/company/dashboard/hires', label: 'Hired Candidates', icon: FiCheckCircle },
     { to: '/company/dashboard/notifications', label: 'Notifications', icon: FiBell },
   ],
   admin: [

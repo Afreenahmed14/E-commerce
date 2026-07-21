@@ -74,7 +74,7 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <span>© {year} HourlyRecruit. All rights reserved.</span>
-          <Link to="/login/admin" className="footer-admin-link">Admin</Link>
+          {/* <Link to="/login/admin" className="footer-admin-link">Admin</Link> */}
         </div>
       </div>
     </footer>

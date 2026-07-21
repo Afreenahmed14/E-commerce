@@ -167,9 +167,17 @@ const CATALOG = {
         durationDays: TIER_DURATIONS_DAYS[TIERS.FREE],
         quotas: {
           [QUOTA_KEYS.JOB_POSTS]: { limit: 3, windowDays: 14 },
-          [QUOTA_KEYS.HIRES]: { limit: 6, windowDays: 7 },
+          // Free tier can browse profile teasers (name/about/skills) but
+          // cannot actually hire — this quota is kept defined for shape
+          // consistency but is never reachable, since hireController
+          // requires an active paid plan before it ever checks this.
+          [QUOTA_KEYS.HIRES]: { limit: 0, windowDays: 7 },
         },
-        features: ['Post up to 3 jobs every 2 weeks', 'Hire up to 6 candidates per week'],
+        features: [
+          'Post up to 3 jobs every 2 weeks',
+          'Browse engineer name, about & skills',
+          'Upgrade to view full profiles and hire',
+        ],
       },
       [TIERS.MONTHLY]: {
         id: TIERS.MONTHLY,

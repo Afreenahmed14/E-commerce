@@ -20,4 +20,11 @@ export const candidateService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }).then((r) => r.data);
   },
+  // Hire Now (company) / Get Project Partner (candidate) — role-aware on
+  // the backend, so the same call works for both dashboards.
+  hire: (candidateId) => api.post(`/candidates/${candidateId}/hire`).then((r) => r.data),
+  // Candidate dashboard: companies/candidates who have hired ME.
+  getHiredBy: () => api.get('/candidates/me/hired-by').then((r) => r.data),
+  // Candidate dashboard: fellow engineers I've hired as project partners.
+  getMyProjectPartners: () => api.get('/candidates/me/project-partners').then((r) => r.data),
 };

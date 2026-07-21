@@ -5,6 +5,7 @@ const {
   getMyProfile, updateMyProfile, uploadLogo,
   bookmarkCandidate, removeBookmark, getBookmarks,
 } = require('../controllers/companyController');
+const { getHiresForCompany } = require('../controllers/hireController');
 const { protect } = require('../middleware/authMiddleware');
 const authorize = require('../middleware/roleMiddleware');
 const validateRequest = require('../middleware/validateRequest');
@@ -21,5 +22,7 @@ router.post('/me/logo', uploadImage.single('logo'), uploadLogo);
 router.get('/me/bookmarks', getBookmarks);
 router.post('/me/bookmarks/:candidateId', bookmarkCandidate);
 router.delete('/me/bookmarks/:candidateId', removeBookmark);
+
+router.get('/me/hires', getHiresForCompany);
 
 module.exports = router;

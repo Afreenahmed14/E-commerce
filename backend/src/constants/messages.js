@@ -40,5 +40,14 @@ module.exports = {
     QUOTA_PROJECT_PARTNER_REACHED: 'You have reached your project partner request limit for this plan. Upgrade for more.',
     QUOTA_JOB_POSTS_REACHED: 'You have reached your job posting limit for this plan. Upgrade to post more jobs.',
     QUOTA_HIRES_REACHED: 'You have reached your hiring limit for this plan. Upgrade to hire more candidates.',
+    SUBSCRIPTION_REQUIRED_TO_HIRE: 'A paid subscription is required to view full profiles and hire. Upgrade to continue.',
+    SUBSCRIPTION_REQUIRED_TO_HIRE_PARTNER: 'A Candidate + Project Partner subscription is required to hire a project partner. Upgrade to continue.',
+  },
+  HIRE: {
+    CANNOT_HIRE_SELF: 'You cannot hire yourself',
+    ALREADY_HIRED: 'You have already hired this engineer',
+    ALREADY_HIRED_PARTNER: 'You have already connected with this project partner',
+    HIRED_SUCCESS: 'Candidate hired successfully',
+    HIRED_PARTNER_SUCCESS: 'Project partner hired successfully',
   },
 };

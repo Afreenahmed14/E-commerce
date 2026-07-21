@@ -1,0 +1,77 @@
+.connections-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.connection-card {
+  padding: var(--space-4);
+}
+
+.connection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.connection-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.connection-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.connection-sub {
+  margin: 2px 0 0;
+  font-size: var(--font-size-sm);
+}
+
+.connection-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.connection-declined-note {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+  font-size: var(--font-size-sm);
+}
+
+.connection-pending-note {
+  margin: var(--space-3) 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+}
+
+.connection-work-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+
+.connection-paid-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-success);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}

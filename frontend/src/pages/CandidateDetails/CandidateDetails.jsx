@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { FiStar, FiMapPin, FiGithub, FiLinkedin, FiLock, FiExternalLink, FiBookmark, FiFileText, FiDownload } from 'react-icons/fi';
+import { FiStar, FiMapPin, FiGithub, FiLinkedin, FiLock, FiExternalLink, FiBookmark, FiFileText, FiDownload, FiCheckCircle, FiUserPlus } from 'react-icons/fi';
 import { asDownloadUrl } from '../../utils/fileUrl';
 import { candidateService } from '../../services/candidateService';
 import { reviewService } from '../../services/reviewService';
 import { companyService } from '../../services/companyService';
 import { useAuth } from '../../hooks/useAuth';
+import { useAlert } from '../../context/AlertContext';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/common/Button';
@@ -21,16 +22,19 @@ import './CandidateDetails.css';
 export default function CandidateDetails() {
   const { id } = useParams();
   const { isAuthenticated, role, user } = useAuth();
+  const { showError, showSuccess } = useAlert();
 
   const [candidate, setCandidate] = useState(null);
   const [socialLocked, setSocialLocked] = useState(false);
   const [profileLocked, setProfileLocked] = useState(false);
+  const [hireInfo, setHireInfo] = useState(null);
   const [loginRequired, setLoginRequired] = useState(false);
   const [viewLimitReached, setViewLimitReached] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false);
   const [bookmarking, setBookmarking] = useState(false);
+  const [hiring, setHiring] = useState(false);
   const sidebarRef = useRef(null);
 
   const loadData = useCallback(async () => {
@@ -49,6 +53,7 @@ export default function CandidateDetails() {
       setCandidate(profileRes.data.candidate);
       setSocialLocked(!!profileRes.data.socialLocked);
       setProfileLocked(!!profileRes.data.profileLocked);
+      setHireInfo(profileRes.data.hire || null);
       setReviews(reviewsRes.data.reviews);
     } catch (err) {
       if (err.response?.status === 401) {
@@ -94,6 +99,29 @@ export default function CandidateDetails() {
       setCandidate((prev) => ({ ...prev, isBookmarked: !next }));
     } finally {
       setBookmarking(false);
+    }
+  };
+
+  const handleHire = async () => {
+    if (!candidate) return;
+    setHiring(true);
+    try {
+      const res = await candidateService.hire(candidate._id);
+      setHireInfo({
+        role: role === 'company' ? 'company' : 'project-partner',
+        alreadyHired: true,
+        hiredAt: res.data.hire.unlockDate,
+      });
+      showSuccess(res.message || 'Hired successfully.');
+    } catch (err) {
+      if (err.response?.status === 402) {
+        showError(err.response?.data?.message || 'A paid subscription is required to hire.');
+        setSubscriptionModalOpen(true);
+      } else {
+        showError(err.response?.data?.message || 'Could not complete hire.');
+      }
+    } finally {
+      setHiring(false);
     }
   };
 
@@ -152,8 +180,12 @@ export default function CandidateDetails() {
               </div>
             </div>
             <div className="details-rate-box">
-              <span className="details-rate">₹{candidate.hourlyRate}</span>
-              <span className="text-muted">/hour</span>
+              {!profileLocked && (
+                <>
+                  <span className="details-rate">₹{candidate.hourlyRate}</span>
+                  <span className="text-muted">/hour</span>
+                </>
+              )}
               {isCompany && (
                 <button
                   type="button"
@@ -164,18 +196,44 @@ export default function CandidateDetails() {
                   <FiBookmark /> {candidate.isBookmarked ? 'Bookmarked' : 'Bookmark'}
                 </button>
               )}
+              {(isCompany || (isAuthenticated && role === 'candidate' && !isOwnProfile)) && (
+                hireInfo?.alreadyHired ? (
+                  <span className="details-hired-badge">
+                    <FiCheckCircle /> Hired on {formatDate(hireInfo.hiredAt)}
+                  </span>
+                ) : (
+                  <Button onClick={handleHire} disabled={hiring}>
+                    <FiUserPlus /> {hiring ? 'Please wait…' : (isCompany ? 'Hire Now' : 'Get Project Partner')}
+                  </Button>
+                )
+              )}
             </div>
           </Card>
 
           {profileLocked ? (
-            <Card className="details-section social-locked-note">
-              <p className="text-muted unlock-note">
-                <FiLock /> Full profiles are visible to fellow engineers with an active Candidate + Project Partner subscription.
-              </p>
-              <Button fullWidth onClick={() => setSubscriptionModalOpen(true)}>
-                View Plans
-              </Button>
-            </Card>
+            <>
+              <Card className="details-section">
+                <h2>About</h2>
+                <p>{candidate.about || 'No bio provided yet.'}</p>
+              </Card>
+              <Card className="details-section">
+                <h2>Skills</h2>
+                <div className="details-skills">
+                  {(candidate.primarySkills?.length ? candidate.primarySkills : candidate.skills || []).map((s) => <Badge key={s}>{s}</Badge>)}
+                  {candidate.secondarySkills?.map((s) => <Badge key={s} variant="default">{s}</Badge>)}
+                </div>
+              </Card>
+              <Card className="details-section social-locked-note">
+                <p className="text-muted unlock-note">
+                  <FiLock /> {isCompany
+                    ? 'Upgrade to a paid Company plan to view this engineer\'s full profile (rate, projects, education, reviews) and to hire them.'
+                    : 'Full profiles are visible to fellow engineers with an active Candidate + Project Partner subscription — upgrade to view details and hire a project partner.'}
+                </p>
+                <Button fullWidth onClick={() => setSubscriptionModalOpen(true)}>
+                  View Plans
+                </Button>
+              </Card>
+            </>
           ) : (
           <>
           <Card className="details-section">

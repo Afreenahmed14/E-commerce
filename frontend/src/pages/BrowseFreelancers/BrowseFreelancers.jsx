@@ -78,7 +78,7 @@ export default function BrowseFreelancers() {
           skills: LEGACY_TYPE_SKILLS[d.name] || [],
         })));
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const debouncedQuery = useDebounce(filters.q, 400);
@@ -96,7 +96,7 @@ export default function BrowseFreelancers() {
         city: debouncedCity,
         sort,
         page,
-        limit: 12,
+        limit: 16,
       };
       Object.keys(params).forEach((k) => {
         if (params[k] === '' || (Array.isArray(params[k]) && params[k].length === 0)) delete params[k];
@@ -175,224 +175,221 @@ export default function BrowseFreelancers() {
 
   return (
     <div className="browse-page">
-      <div className="container section browse-page-inner">
-      <h1>Browse Engineers</h1>
-      <p className="text-muted browse-subtitle">
-        Find skilled engineers by filtering expertise, hourly rate, availability, and location. Browse verified profiles and hire the right talent with confidence.
-      </p>
 
-      {/* Row 1: main search bar + Developer Type, outside the results panel */}
-      <div className="browse-quickbar">
-        <div className="filter-search-inline browse-main-search">
-          <FiSearch />
-          <input
-            placeholder="Search by skill, headline, or keyword…"
-            value={filters.q}
-            onChange={(e) => updateFilter('q', e.target.value)}
-          />
-        </div>
-
-        <FilterDropdown
-          label="Developer Type"
-          summary={categoryLabel}
-          active={!!filters.category}
-          onClear={() => setFilters((f) => ({ ...f, category: '', skill: '' }))}
-        >
-          <div className="filter-option-list">
-            {categoryGroups.map((g) => (
-              <button
-                type="button"
-                key={g.name}
-                className={`filter-option ${filters.category === g.name ? 'is-selected' : ''}`}
-                onClick={() => {
-                  setPage(1);
-                  setFilters((f) => ({ ...f, category: g.name, skill: g.skills }));
-                }}
-              >
-                {g.name}
-              </button>
-            ))}
-          </div>
-        </FilterDropdown>
-      </div>
+      
 
       {/* Everything below — name search, filters, sort, results, cards —
           lives inside one unified panel so it reads as a single surface. */}
       <div className="browse-panel">
-      <div className="browse-filterbar">
-        <div className="filter-search-inline browse-name-search">
-          <FiSearch />
-          <input
-            placeholder="Search by name…"
-            value={filters.name}
-            onChange={(e) => updateFilter('name', e.target.value)}
-          />
-        </div>
+        <div className="container-section-browse-page-inner">
+          
+          {/* <p className="text-muted browse-subtitle">
+            Find skilled engineers by filtering expertise, hourly rate, availability, and location. Browse verified profiles and hire the right talent with confidence.
+          </p> */}
+          <div className="browse-filterbar">
+            <h1>Browse Engineers</h1>
+            <div className="filter-search-inline browse-name-search">
+              <FiSearch />
+              <input
+                placeholder="Search by name…"
+                value={filters.name}
+                onChange={(e) => updateFilter('name', e.target.value)}
+              />
+            </div>
+            <div className="top-search">
+        {/* Row 1: main search bar + Developer Type, outside the results panel */}
+        <div className="browse-quickbar">
+          
 
-        <div className="browse-filterbar-actions">
           <FilterDropdown
-            label="Filters"
-            modal
-            summary={(() => {
-              const count = [rateSummary, experienceSummary, ratingSummary, availabilityLabel, filters.city, filters.name, isRemoteOnly ? 'Remote' : ''].filter(Boolean).length;
-              return count ? `${count} active` : '';
-            })()}
-            active={!!(rateSummary || experienceSummary || ratingSummary || availabilityLabel || filters.city || filters.name || isRemoteOnly)}
-            onClear={() => setFilters((f) => ({ ...INITIAL_FILTERS, q: f.q, category: f.category, skill: f.skill }))}
+            label="Developer Type"
+            summary={categoryLabel}
+            active={!!filters.category}
+            onClear={() => setFilters((f) => ({ ...f, category: '', skill: '' }))}
           >
-            <div className="filters-popup">
-              <div className="sidebar-filter-group">
-                <label>Charges per hour (₹)</label>
-                <div className="filter-range">
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    value={filters.minRate}
-                    onChange={(e) => updateFilter('minRate', e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    value={filters.maxRate}
-                    onChange={(e) => updateFilter('maxRate', e.target.value)}
-                  />
-                </div>
-              </div>
+            <div className="filter-option-list">
+              {categoryGroups.map((g) => (
+                <button
+                  type="button"
+                  key={g.name}
+                  className={`filter-option ${filters.category === g.name ? 'is-selected' : ''}`}
+                  onClick={() => {
+                    setPage(1);
+                    setFilters((f) => ({ ...f, category: g.name, skill: g.skills }));
+                  }}
+                >
+                  {g.name}
+                </button>
+              ))}
+            </div>
+          </FilterDropdown>
+        </div>
+      </div>
 
-              <div className="sidebar-filter-group">
-                <label>Years of experience</label>
-                <div className="filter-range">
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    value={filters.minExperience}
-                    onChange={(e) => updateFilter('minExperience', e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    value={filters.maxExperience}
-                    onChange={(e) => updateFilter('maxExperience', e.target.value)}
-                  />
-                </div>
-              </div>
+            <div className="browse-filterbar-actions">
+              <FilterDropdown
+                label="Filters"
+                modal
+                summary={(() => {
+                  const count = [rateSummary, experienceSummary, ratingSummary, availabilityLabel, filters.city, filters.name, isRemoteOnly ? 'Remote' : ''].filter(Boolean).length;
+                  return count ? `${count} active` : '';
+                })()}
+                active={!!(rateSummary || experienceSummary || ratingSummary || availabilityLabel || filters.city || filters.name || isRemoteOnly)}
+                onClear={() => setFilters((f) => ({ ...INITIAL_FILTERS, q: f.q, category: f.category, skill: f.skill }))}
+              >
+                <div className="filters-popup">
+                  <div className="sidebar-filter-group">
+                    <label>Charges per hour (₹)</label>
+                    <div className="filter-range">
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={filters.minRate}
+                        onChange={(e) => updateFilter('minRate', e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={filters.maxRate}
+                        onChange={(e) => updateFilter('maxRate', e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-              <div className="sidebar-filter-group">
-                <label>Rating</label>
-                <div className="filter-option-list sidebar-option-list filter-option-row">
-                  {RATING_OPTIONS.map((r) => (
+                  <div className="sidebar-filter-group">
+                    <label>Years of experience</label>
+                    <div className="filter-range">
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={filters.minExperience}
+                        onChange={(e) => updateFilter('minExperience', e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={filters.maxExperience}
+                        onChange={(e) => updateFilter('maxExperience', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sidebar-filter-group">
+                    <label>Rating</label>
+                    <div className="filter-option-list sidebar-option-list filter-option-row">
+                      {RATING_OPTIONS.map((r) => (
+                        <button
+                          type="button"
+                          key={r}
+                          className={`filter-option ${filters.minRating === String(r) ? 'is-selected' : ''}`}
+                          onClick={() => updateFilter('minRating', filters.minRating === String(r) ? '' : String(r))}
+                        >
+                          {r}★ &amp; up
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="sidebar-filter-group">
+                    <label>Availability</label>
+                    <div className="filter-option-list sidebar-option-list filter-option-row">
+                      {AVAILABILITY_OPTIONS.map((o) => (
+                        <button
+                          type="button"
+                          key={o.value}
+                          className={`filter-option ${filters.availability === o.value ? 'is-selected' : ''}`}
+                          onClick={() => updateFilter('availability', filters.availability === o.value ? '' : o.value)}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="sidebar-filter-group">
+                    <label>City</label>
+                    <CitySearchInput
+                      value={filters.city}
+                      onChange={(city) => updateFilter('city', city)}
+                      placeholder="e.g. Bengaluru"
+                    />
+                  </div>
+
+                  <div className="sidebar-filter-group">
                     <button
                       type="button"
-                      key={r}
-                      className={`filter-option ${filters.minRating === String(r) ? 'is-selected' : ''}`}
-                      onClick={() => updateFilter('minRating', filters.minRating === String(r) ? '' : String(r))}
+                      className={`filter-pill filter-toggle-pill sidebar-remote-toggle ${isRemoteOnly ? 'is-active' : ''}`}
+                      onClick={() => updateFilter('remote', isRemoteOnly ? '' : 'true')}
                     >
-                      {r}★ &amp; up
+                      Remote only
                     </button>
-                  ))}
+                  </div>
                 </div>
-              </div>
+              </FilterDropdown>
 
-              <div className="sidebar-filter-group">
-                <label>Availability</label>
-                <div className="filter-option-list sidebar-option-list filter-option-row">
-                  {AVAILABILITY_OPTIONS.map((o) => (
+              <FilterDropdown label="Sort by" summary={sortLabel} active={sort !== 'name'} onClear={() => setSort('name')}>
+                <div className="filter-option-list">
+                  {SORT_OPTIONS.map((o) => (
                     <button
                       type="button"
                       key={o.value}
-                      className={`filter-option ${filters.availability === o.value ? 'is-selected' : ''}`}
-                      onClick={() => updateFilter('availability', filters.availability === o.value ? '' : o.value)}
+                      className={`filter-option ${sort === o.value ? 'is-selected' : ''}`}
+                      onClick={() => setSort(o.value)}
                     >
                       {o.label}
                     </button>
                   ))}
                 </div>
-              </div>
-
-              <div className="sidebar-filter-group">
-                <label>City</label>
-                <CitySearchInput
-                  value={filters.city}
-                  onChange={(city) => updateFilter('city', city)}
-                  placeholder="e.g. Bengaluru"
-                />
-              </div>
-
-              <div className="sidebar-filter-group">
-                <button
-                  type="button"
-                  className={`filter-pill filter-toggle-pill sidebar-remote-toggle ${isRemoteOnly ? 'is-active' : ''}`}
-                  onClick={() => updateFilter('remote', isRemoteOnly ? '' : 'true')}
-                >
-                  Remote only
-                </button>
-              </div>
+              </FilterDropdown>
             </div>
-          </FilterDropdown>
+          </div>
 
-          <FilterDropdown label="Sort by" summary={sortLabel} active={sort !== 'name'} onClear={() => setSort('name')}>
-            <div className="filter-option-list">
-              {SORT_OPTIONS.map((o) => (
-                <button
-                  type="button"
-                  key={o.value}
-                  className={`filter-option ${sort === o.value ? 'is-selected' : ''}`}
-                  onClick={() => setSort(o.value)}
-                >
-                  {o.label}
-                </button>
-              ))}
-            </div>
-          </FilterDropdown>
-        </div>
-      </div>
-
-      {filters.category && (
-        <div className="active-skill-chip">
-          Developer Type: <strong>{filters.category}</strong>
-          <button
-            type="button"
-            onClick={() => setFilters((f) => ({ ...f, category: '', skill: '' }))}
-            aria-label="Clear developer type filter"
-          >
-            <FiX size={13} />
-          </button>
-        </div>
-      )}
-
-      {/* Results count */}
-      <div className="browse-shell">
-        <div className="browse-toolbar">
-          <span className="browse-results-count">
-            {loading ? 'Searching…' : `${pagination.total ?? candidates.length} engineer${(pagination.total ?? candidates.length) === 1 ? '' : 's'} found`}
-          </span>
-        </div>
-
-        <div className="browse-card-scroll">
-          {loading ? (
-            <Loader label="Finding engineers…" />
-          ) : candidates.length === 0 ? (
-            <EmptyState title="No engineers match your filters" description="Try widening your search criteria." />
-          ) : (
-            <div className="candidate-grid" ref={gridRef}>
-              {candidates.map((c) => (
-                <CandidateCard
-                  key={c._id}
-                  candidate={c}
-                  isCompany={isCompany}
-                  bookmarking={bookmarking}
-                  onToggleBookmark={toggleBookmark}
-                />
-              ))}
+          {filters.category && (
+            <div className="active-skill-chip">
+              Developer Type: <strong>{filters.category}</strong>
+              <button
+                type="button"
+                onClick={() => setFilters((f) => ({ ...f, category: '', skill: '' }))}
+                aria-label="Clear developer type filter"
+              >
+                <FiX size={13} />
+              </button>
             </div>
           )}
-        </div>
 
-        {!loading && candidates.length > 0 && (
-          <Pagination page={page} totalPages={pagination.totalPages} onPageChange={setPage} />
-        )}
-      </div>
-      </div>
+          {/* Results count */}
+          <div className="browse-shell">
+            <div className="browse-toolbar">
+              <span className="browse-results-count">
+                {loading ? 'Searching…' : `${pagination.total ?? candidates.length} engineer${(pagination.total ?? candidates.length) === 1 ? '' : 's'} found`}
+              </span>
+            </div>
+
+            <div className="browse-card-scroll">
+              {loading ? (
+                <Loader label="Finding engineers…" />
+              ) : candidates.length === 0 ? (
+                <EmptyState title="No engineers match your filters" description="Try widening your search criteria." />
+              ) : (
+                <div className="candidate-grid" ref={gridRef}>
+                  {candidates.map((c) => (
+                    <CandidateCard
+                      key={c._id}
+                      candidate={c}
+                      isCompany={isCompany}
+                      bookmarking={bookmarking}
+                      onToggleBookmark={toggleBookmark}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {!loading && candidates.length > 0 && (
+              <Pagination page={page} totalPages={pagination.totalPages} onPageChange={setPage} />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

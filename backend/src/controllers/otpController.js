@@ -11,16 +11,14 @@ const roleModelName = (role) => (role === 'candidate' ? 'Candidate' : 'Company')
 const isProd = () => process.env.NODE_ENV === 'production';
 
 /**
- * Once both phone and email are OTP-verified, the profile earns the
- * "Verified" badge automatically — this is separate from (and in addition
- * to) the manual document-verification flow admins run via the
- * Verification model. Only promotes unverified/pending profiles; never
- * downgrades a rejected one.
+ * Once the phone is OTP-verified, the profile earns the "Verified" badge
+ * automatically — this is separate from (and in addition to) the manual
+ * document-verification flow admins run via the Verification model. Only
+ * promotes unverified/pending profiles; never downgrades a rejected one.
  */
 const promoteVerificationIfEligible = async (user) => {
   if (
     user.phoneVerified
-    && user.emailVerified
     && user.verificationStatus !== VERIFICATION_STATUS.VERIFIED
     && user.verificationStatus !== VERIFICATION_STATUS.REJECTED
   ) {

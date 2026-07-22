@@ -8,6 +8,7 @@ import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
 import CityAutocomplete from '../../components/common/CityAutocomplete';
+import PhoneOtpInput from '../../components/common/PhoneOtpInput';
 import SubscriptionModal from '../../components/common/SubscriptionModal';
 import { INDUSTRY_OPTIONS } from '../../utils/constants';
 import { getCountryOptions, getStateOptions, getCityOptions, findCountryIsoByName, findStateIsoByName } from '../../utils/locationData';
@@ -26,6 +27,8 @@ export default function CompanyEditProfile() {
   const [stateOptions, setStateOptions] = useState([]);
   const [stateOptionsLoading, setStateOptionsLoading] = useState(false);
   const [cityOptions, setCityOptions] = useState([]);
+  const [phone, setPhone] = useState('');
+  const [phoneVerified, setPhoneVerified] = useState(false);
 
   useEffect(() => {
     getCountryOptions().then(setCountryOptions);
@@ -50,6 +53,8 @@ export default function CompanyEditProfile() {
   const loadProfile = async () => {
     const res = await companyService.getMyProfile();
     setCompany(res.data.company);
+    setPhone(res.data.company.phone || '');
+    setPhoneVerified(Boolean(res.data.company.phoneVerified));
     const resolvedCountryIso = await findCountryIsoByName(res.data.company.location?.country);
     setCountryIso(resolvedCountryIso);
     setStateIso(await findStateIsoByName(resolvedCountryIso, res.data.company.location?.state));
@@ -179,6 +184,14 @@ export default function CompanyEditProfile() {
             <Input label="Designation" register={register('contactPersonDesignation')} />
           </div>
           <Input label="Contact Phone" register={register('contactPersonPhone')} />
+
+          <PhoneOtpInput
+            label="Company Phone Number"
+            value={phone}
+            onChange={setPhone}
+            verified={phoneVerified}
+            onVerified={() => setPhoneVerified(true)}
+          />
 
           <div className="location-fields">
             <div className="form-field">

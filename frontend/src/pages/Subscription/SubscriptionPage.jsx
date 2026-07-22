@@ -8,7 +8,6 @@ import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
 import SubscriptionModal from '../../components/common/SubscriptionModal';
-import VerificationPanel from '../../components/common/VerificationPanel';
 import { formatDate } from '../../utils/formatters';
 import './SubscriptionPage.css';
 
@@ -139,14 +138,6 @@ export default function SubscriptionPage() {
       </Card>
 
       <SubscriptionModal open={modalOpen} onClose={handleModalClose} />
-
-      {status?.isActive && (
-        <VerificationPanel
-          phoneVerified={status?.phoneVerified}
-          emailVerified={status?.emailVerified}
-          onVerified={load}
-        />
-      )}
     </div>
   );
 }

@@ -11,6 +11,7 @@ import Loader from '../../components/common/Loader';
 import MultiSelectDropdown from '../../components/common/MultiSelectDropdown';
 import PhotoCapture from '../../components/common/PhotoCapture';
 import CityAutocomplete from '../../components/common/CityAutocomplete';
+import PhoneOtpInput from '../../components/common/PhoneOtpInput';
 import SubscriptionModal from '../../components/common/SubscriptionModal';
 import { AVAILABILITY_OPTIONS, LANGUAGE_OPTIONS, DEVELOPER_TYPE_OPTIONS } from '../../utils/constants';
 import { getCountryOptions, getStateOptions, getCityOptions, findCountryIsoByName, findStateIsoByName } from '../../utils/locationData';
@@ -42,6 +43,8 @@ export default function CandidateEditProfile() {
   const [stateOptionsLoading, setStateOptionsLoading] = useState(false);
   const [cityOptions, setCityOptions] = useState([]);
   const [touchedLocation, setTouchedLocation] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [phoneVerified, setPhoneVerified] = useState(false);
 
   useEffect(() => {
     getCountryOptions().then(setCountryOptions);
@@ -76,6 +79,8 @@ export default function CandidateEditProfile() {
     setPrimarySkills(c.primarySkills || []);
     setSecondarySkills(c.secondarySkills || []);
     setLanguages(c.languages || []);
+    setPhone(c.phone || '');
+    setPhoneVerified(Boolean(c.phoneVerified));
     const resolvedCountryIso = await findCountryIsoByName(c.location?.country);
     setCountryIso(resolvedCountryIso);
     setStateIso(await findStateIsoByName(resolvedCountryIso, c.location?.state));
@@ -294,6 +299,14 @@ export default function CandidateEditProfile() {
             register={register('headline', { required: 'Headline is required' })}
             error={errors.headline?.message}
             placeholder="e.g. Full-Stack MERN Developer"
+          />
+
+          <PhoneOtpInput
+            label="Phone Number"
+            value={phone}
+            onChange={setPhone}
+            verified={phoneVerified}
+            onVerified={() => setPhoneVerified(true)}
           />
 
           <div className="form-field">

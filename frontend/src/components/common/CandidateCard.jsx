@@ -54,7 +54,7 @@ export default function CandidateCard({ candidate: c, isCompany, bookmarking, on
           </div>
         </div>
 
-        <p className="candidate-about text-muted">{c.about}</p>
+        {/* <p className="candidate-about text-muted">{c.about}</p> */}
 
         <div className="candidate-skills">
           {(c.skills || []).slice(0, 4).map((s) => <Badge key={s} variant="skill">{s}</Badge>)}

@@ -1,5 +1,5 @@
 .site-footer {
-  background: linear-gradient(180deg, #0a1730 0%, #060e21 100%);
+  background: linear-gradient(180deg, #162543 0%, #1d3a7e 100%);
   color: #aebede;
   padding-top: var(--space-0);
 }
@@ -17,7 +17,8 @@
 
 /* Brand block */
 .footer-brand {
-  max-width: 320px;
+  max-width: 200px;
+  padding-top: 6%;
 }
 
 .footer-logo {
@@ -70,7 +71,7 @@
 
 .footer-tagline {
   color: #8ea0c9;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   margin-bottom: var(--space-4);
 }
 

@@ -8,6 +8,19 @@
 
 html {
   scroll-behavior: smooth;
+  /* Zoom out the entire app UI. Adjust this value to zoom more/less
+     (e.g. 0.9 = 90%, 0.75 = 75%). zoom is supported in Chrome, Edge,
+     and Safari; Firefox fallback below handles the rest. */
+  zoom: 0.85;
+}
+
+@supports not (zoom: 1) {
+  /* Firefox fallback: scale the whole document from the top-left corner */
+  html {
+    transform: scale(0.85);
+    transform-origin: top left;
+    width: 117.65%; /* 1 / 0.85, keeps content filling the viewport width */
+  }
 }
 
 body {

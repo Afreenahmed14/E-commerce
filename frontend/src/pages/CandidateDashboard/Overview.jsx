@@ -27,7 +27,7 @@ export default function CandidateOverview() {
   return (
     <div>
       <div className="dashboard-header">
-        <h1>Welcome back</h1>
+        <h1>Welcome Back</h1>
         <Link to="/candidate/dashboard/profile"><Button size="sm"><FiEdit /> Edit Profile</Button></Link>
       </div>
 
@@ -39,7 +39,7 @@ export default function CandidateOverview() {
 
       <div className="stat-grid stagger-children">
         <Card className="stat-card">
-          <div className="stat-card-label"><FaRupeeSign size={14} /> your charges per hour</div>
+          <div className="stat-card-label"><FaRupeeSign size={14} /> Your Charges Per Hour</div>
           <div className="stat-card-value">₹<CountUpValue value={candidate?.hourlyRate || 0} /></div>
         </Card>
         <Card className="stat-card">

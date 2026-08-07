@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FiArrowLeft, FiDownload, FiStar } from 'react-icons/fi';
+import { FiArrowLeft, FiDownload, FiStar, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { applicationService } from '../../services/applicationService';
 import { asDownloadUrl } from '../../utils/fileUrl';
 import Card from '../../components/common/Card';
@@ -18,6 +18,7 @@ export default function JobApplicants() {
   const [job, setJob] = useState(null);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
     applicationService.getForJob(jobId)
@@ -99,7 +100,44 @@ export default function JobApplicants() {
                 >
                   {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
+
+                {app.answers?.length > 0 && (
+                  <button
+                    type="button"
+                    className="social-link"
+                    style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer' }}
+                    onClick={() => setExpandedId(expandedId === app._id ? null : app._id)}
+                  >
+                    {expandedId === app._id ? <FiChevronUp /> : <FiChevronDown />}
+                    {' '}Questionnaire ({app.answers.filter((a) => a.isCorrect).length}/{app.answers.length} correct)
+                  </button>
+                )}
               </div>
+
+              {expandedId === app._id && app.answers?.length > 0 && (
+                <div style={{ marginTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
+                  {app.answers.map((a, idx) => (
+                    <div key={idx} style={{ marginBottom: 'var(--space-3)' }}>
+                      <p style={{ margin: '0 0 4px', fontWeight: 600 }}>
+                        Q{idx + 1}. {a.question?.question}
+                      </p>
+                      <p style={{ margin: 0 }}>
+                        Answer: {a.answer}{' '}
+                        {a.question?.type === 'mcq' && (
+                          <Badge variant={a.isCorrect ? 'success' : 'danger'}>
+                            {a.isCorrect ? 'Correct' : 'Incorrect'}
+                          </Badge>
+                        )}
+                      </p>
+                      {a.question?.type === 'mcq' && !a.isCorrect && a.question?.correctOptionIndex != null && (
+                        <p className="text-muted" style={{ margin: '2px 0 0', fontSize: 'var(--font-size-sm)' }}>
+                          Correct answer: {a.question.options?.[a.question.correctOptionIndex]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
           ))}
         </div>

@@ -21,10 +21,14 @@ const notificationSchema = new mongoose.Schema(
     message: { type: String, required: true, trim: true },
     type: {
       type: String,
-      enum: ['info', 'success', 'warning', 'payment', 'verification', 'review'],
+      enum: ['info', 'success', 'warning', 'payment', 'verification', 'review',
+        'application', 'interview', 'chat', 'subscription', 'job'],
       default: 'info',
     },
     isRead: { type: Boolean, default: false },
+    // Optional deep-link target so the frontend can route the user to the
+    // relevant screen when they click a notification.
+    link: { type: String, default: '' },
   },
   { timestamps: true }
 );

@@ -3,10 +3,11 @@ import { useParams, Navigate } from 'react-router-dom';
 import { FiMapPin, FiBriefcase, FiClock, FiUsers } from 'react-icons/fi';
 import { jobService } from '../../services/jobService';
 import { applicationService } from '../../services/applicationService';
+import { mcqService } from '../../services/mcqService';
 import { useAuth } from '../../hooks/useAuth';
 import { useAlert } from '../../context/AlertContext';
 import Card from '../../components/common/Card';
-import Badge from '../../components/common/Badge';
+import Badge from '../../components/common/Badge';  
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
 import Modal from '../../components/common/Modal';
@@ -31,11 +32,15 @@ export default function JobDetails() {
   const [job, setJob] = useState(null);
   const [hasApplied, setHasApplied] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [applyOpen, setApplyOpen] = useState(false);
+const [applyOpen, setApplyOpen] = useState(false);
   const [coverLetter, setCoverLetter] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { showError, showSuccess } = useAlert();
   const [loginRequired, setLoginRequired] = useState(false);
+  // Feature 5 — application questionnaire
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [questionsLoading, setQuestionsLoading] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -49,19 +54,55 @@ export default function JobDetails() {
 
   useEffect(() => { load(); }, [load]);
 
-  const handleApplyClick = () => {
+const handleApplyClick = async () => {
     if (!isAuthenticated) { setLoginRequired(true); return; }
     if (role !== 'candidate') return;
     setApplyOpen(true);
+    setAnswers({});
+    setQuestionsLoading(true);
+    try {
+      const res = await mcqService.getForApply(id);
+      setQuestions(res.data.questions || []);
+    } catch {
+      setQuestions([]);
+    } finally {
+      setQuestionsLoading(false);
+    }
+  };
+
+  const handleCloseApply = () => {
+    setApplyOpen(false);
+    setQuestions([]);
+    setAnswers({});
+  };
+
+  const handleQuestionChange = (questionId, value) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
   const handleSubmitApplication = async (e) => {
     e.preventDefault();
+
+    // Validate all questions are answered.
+    const unanswered = questions.filter((q) => !String(answers[q._id] ?? '').trim());
+    if (unanswered.length > 0) {
+      showError(`Please answer ${unanswered.length === 1 ? 'the question' : `${unanswered.length} questions`} before submitting.`);
+      return;
+    }
+
+    const answerPayload = questions.map((q) => {
+      const raw = answers[q._id];
+      // MCQs expect the selected option index; text questions expect the string.
+      const isMcq = q.type === 'mcq';
+      const value = isMcq ? Number(raw) : String(raw);
+      return { questionId: q._id, answer: value };
+    });
+
     setSubmitting(true);
     try {
-      await applicationService.apply(id, coverLetter);
+      await applicationService.apply(id, coverLetter, answerPayload);
       setHasApplied(true);
-      setApplyOpen(false);
+      handleCloseApply();
       showSuccess('Application submitted.');
     } catch (err) {
       showError(err.response?.data?.message || 'Could not submit your application.');

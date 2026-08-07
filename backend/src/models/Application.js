@@ -22,6 +22,15 @@ const applicationSchema = new mongoose.Schema(
     // Snapshot of resume URL at time of applying, in case the candidate
     // updates/removes it later — the company still sees what was submitted.
     resumeSnapshot: { type: String, default: '' },
+
+    // Feature 5 — questionnaire answers. The actual answers live in the
+    // ApplicationAnswer collection; these fields aggregate the result so
+    // the recruiter dashboard can sort by score without a separate query.
+    questionnaireCompleted: { type: Boolean, default: false },
+    totalQuestions: { type: Number, default: 0 },
+    correctAnswers: { type: Number, default: 0 },
+    // Computed overall score (0-100) across submitted answers.
+    questionnaireScore: { type: Number, default: 0, min: 0, max: 100 },
   },
   { timestamps: true }
 );

@@ -321,7 +321,7 @@ export default function CandidateEditProfile() {
 
           <div className="form-grid">
             <Input
-              label="your charge per hour (₹) "
+              label="Your Chaarges Per Hour(₹) "
               type="number"
               register={register('hourlyRate', { required: 'your charges per hour is required', min: { value: 1, message: 'Must be greater than 0' } })}
               error={errors.hourlyRate?.message}

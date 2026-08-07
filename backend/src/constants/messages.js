@@ -19,6 +19,12 @@ module.exports = {
     FIREBASE_MISSING_COMPANY_NAME: 'Company name is required to finish creating your company profile',
     PHONE_IN_USE: 'An account with this phone number already exists',
   },
+  CHATBOT: {
+    CONVERSATION_CREATED: 'Conversation started',
+    CONVERSATION_DELETED: 'Conversation deleted',
+    CONVERSATION_NOT_FOUND: 'Conversation not found',
+    OFF_TOPIC: "I'm your recruitment assistant, so I can only help with resumes, interviews, job search, and career-related questions.",
+  },
   GENERIC: {
     SERVER_ERROR: 'Something went wrong. Please try again later.',
     NOT_FOUND: 'Requested resource was not found',

@@ -1,10 +1,11 @@
-const express = require('express');
+ const express = require('express');
 const router = express.Router();
 const { body, query } = require('express-validator');
 
 const {
   createJob, updateJob, deleteJob, getMyJobs, searchJobs, getJobById,
 } = require('../controllers/jobController');
+const { getJobQuestions } = require('../controllers/mcqController');
 const { protect, optionalAuth } = require('../middleware/authMiddleware');
 const authorize = require('../middleware/roleMiddleware');
 const validateRequest = require('../middleware/validateRequest');
@@ -49,6 +50,10 @@ router.get('/me', protect, authorize(COMPANY), getMyJobs);
 router.post('/', protect, authorize(COMPANY), jobValidator, validateRequest, createJob);
 router.put('/:id', protect, authorize(COMPANY), jobUpdateValidator, validateRequest, updateJob);
 router.delete('/:id', protect, authorize(COMPANY), deleteJob);
+
+// Feature 5 — public questionnaire for the apply flow (candidate-facing).
+// Declared before /:id so ":jobId/questionnaire" style paths don't collide.
+router.get('/:jobId/questions', optionalAuth, getJobQuestions);
 
 router.get('/:id', optionalAuth, getJobById);
 

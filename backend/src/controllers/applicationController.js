@@ -2,11 +2,14 @@ const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 const Application = require('../models/Application');
+const ApplicationAnswer = require('../models/ApplicationAnswer');
+const JobQuestion = require('../models/JobQuestion');
 const Job = require('../models/Job');
 const Notification = require('../models/Notification');
 const { PRODUCTS, QUOTA_KEYS, getQuota } = require('../constants/plans');
 const { consumeQuota } = require('../utils/quota');
 const { ensureSubscriptionFresh } = require('./subscriptionController');
+const { sendApplicationSubmittedEmail } = require('../services/emailService');
 const MESSAGES = require('../constants/messages');
 
 /**
@@ -19,7 +22,7 @@ const MESSAGES = require('../constants/messages');
  * whichever product the account is actually subscribed to.
  */
 const applyToJob = asyncHandler(async (req, res) => {
-  const { jobId, coverLetter } = req.body;
+  const { jobId, coverLetter, answers } = req.body;
 
   const job = await Job.findById(jobId);
   if (!job) throw ApiError.notFound('Job not found');
@@ -49,6 +52,58 @@ const applyToJob = asyncHandler(async (req, res) => {
     resumeSnapshot: req.user.resume || '',
   });
 
+  // Feature 5 — process + score the questionnaire answers if provided.
+  let questionnaireSummary = { completed: false, total: 0, correct: 0, score: 0 };
+  if (Array.isArray(answers) && answers.length > 0) {
+    const jobQuestions = await JobQuestion.find({ jobId }).lean();
+    const qMap = {};
+    jobQuestions.forEach((q) => { qMap[q._id.toString()] = q; });
+
+    const answerDocs = [];
+    let correct = 0;
+    const total = answers.length;
+
+    for (const a of answers) {
+      const q = qMap[a.questionId];
+      if (!q) continue;
+      let isCorrect = false;
+      let score = 0;
+
+      if (q.type === 'mcq') {
+        // a.answer is the selected option index.
+        const selectedIdx = Number(a.answer);
+        isCorrect = selectedIdx === q.correctOptionIndex;
+        score = isCorrect ? 100 : 0;
+        if (isCorrect) correct++;
+      } else {
+        // technical/screening: free text — binary pass (presence) for now.
+        isCorrect = !!(a.answer && a.answer.trim());
+        score = isCorrect ? 60 : 0;
+        if (isCorrect) correct++;
+      }
+
+      answerDocs.push({
+        applicationId: application._id,
+        questionId: q._id,
+        answer: String(a.answer),
+        isCorrect,
+        score,
+      });
+    }
+
+    if (answerDocs.length) {
+      await ApplicationAnswer.insertMany(answerDocs);
+      const overallScore = total ? Math.round((correct / total) * 100) : 0;
+      questionnaireSummary = { completed: true, total, correct, score: overallScore };
+
+      application.questionnaireCompleted = true;
+      application.totalQuestions = total;
+      application.correctAnswers = correct;
+      application.questionnaireScore = overallScore;
+      await application.save();
+    }
+  }
+
   job.applicationsCount = (job.applicationsCount || 0) + 1;
   await job.save();
 
@@ -57,10 +112,19 @@ const applyToJob = asyncHandler(async (req, res) => {
     userModel: 'Company',
     title: 'New application received',
     message: `${req.user.name} applied to your job posting "${job.title}".`,
-    type: 'info',
+    type: 'application',
+    link: `/company/dashboard/jobs/${job._id}/applicants`,
   });
 
-  return new ApiResponse(201, { application }, 'Application submitted').send(res);
+  // Email confirmation to the candidate (Feature 8).
+  const company = await require('../models/Company').findById(job.companyId).select('companyName').lean();
+  sendApplicationSubmittedEmail(req.user.email, {
+    candidateName: req.user.name,
+    jobTitle: job.title,
+    companyName: company?.companyName || 'the company',
+  }).catch((e) => console.warn('[application] email skipped:', e.message));
+
+  return new ApiResponse(201, { application, questionnaire: questionnaireSummary }, 'Application submitted').send(res);
 });
 
 /**
@@ -101,7 +165,31 @@ const getApplicationsForJob = asyncHandler(async (req, res) => {
     .populate('candidateId', 'name headline profileImage resume experience skills rating')
     .sort('-createdAt');
 
-  return new ApiResponse(200, { job, applications }, 'Applications fetched').send(res);
+  // Feature 5 — attach each applicant's questionnaire answers + question
+  // metadata so the recruiter dashboard can show Q&A and per-question score.
+  const appIds = applications.map((a) => a._id);
+  const answers = await ApplicationAnswer.find({ applicationId: { $in: appIds } })
+    .populate('questionId', 'question type options correctAnswer correctOptionIndex order')
+    .lean();
+
+  const answersByApp = {};
+  answers.forEach((ans) => {
+    const key = String(ans.applicationId);
+    if (!answersByApp[key]) answersByApp[key] = [];
+    answersByApp[key].push({
+      question: ans.questionId,
+      answer: ans.answer,
+      isCorrect: ans.isCorrect,
+      score: ans.score,
+    });
+  });
+
+  const result = applications.map((app) => ({
+    ...app.toObject(),
+    answers: answersByApp[String(app._id)] || [],
+  }));
+
+  return new ApiResponse(200, { job, applications: result }, 'Applications fetched').send(res);
 });
 
 /**

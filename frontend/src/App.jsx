@@ -30,6 +30,10 @@ import CandidateNotifications from './pages/CandidateDashboard/Notifications';
 import MyApplications from './pages/CandidateDashboard/MyApplications';
 import CandidateHires from './pages/CandidateDashboard/Hires';
 import SubscriptionPage from './pages/Subscription/SubscriptionPage';
+import CareerAssistant from './pages/CareerAssistant/CareerAssistant';
+import ATSResumeChecker from './pages/ATSResumeChecker/ATSResumeChecker';
+import Messages from './pages/Messages/Messages';
+import Interviews from './pages/Interviews/Interviews';
 
 import CompanyOverview from './pages/CompanyDashboard/Overview';
 import CompanyEditProfile from './pages/CompanyDashboard/EditProfile';
@@ -39,6 +43,7 @@ import CompanyNotifications from './pages/CompanyDashboard/Notifications';
 import MyJobs from './pages/CompanyDashboard/MyJobs';
 import PostJob from './pages/CompanyDashboard/PostJob';
 import JobApplicants from './pages/CompanyDashboard/JobApplicants';
+import ManageQuestions from './pages/CompanyDashboard/ManageQuestions';
 
 import AdminOverview from './pages/AdminDashboard/Overview';
 import AdminUsers from './pages/AdminDashboard/Users';
@@ -48,6 +53,7 @@ import AdminVerifications from './pages/AdminDashboard/Verifications';
 import AdminTaxonomy from './pages/AdminDashboard/Taxonomy';
 import AdminReviews from './pages/AdminDashboard/Reviews';
 import AdminPricing from './pages/AdminDashboard/Pricing';
+import AdminInsights from './pages/AdminInsights/AdminInsights';
 
 /**
  * Top-level route table. Public marketing/browsing routes share PublicLayout
@@ -87,6 +93,10 @@ export default function App() {
           <Route path="subscription" element={<SubscriptionPage />} />
           <Route path="applications" element={<MyApplications />} />
           <Route path="hires" element={<CandidateHires />} />
+          <Route path="career-assistant" element={<CareerAssistant />} />
+          <Route path="ats-checker" element={<ATSResumeChecker />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="interviews" element={<Interviews />} />
           <Route path="notifications" element={<CandidateNotifications />} />
         </Route>
       </Route>
@@ -102,7 +112,10 @@ export default function App() {
           <Route path="jobs/new" element={<PostJob />} />
           <Route path="jobs/:id/edit" element={<PostJob />} />
           <Route path="jobs/:jobId/applicants" element={<JobApplicants />} />
+          <Route path="jobs/:jobId/questions" element={<ManageQuestions />} />
           <Route path="hires" element={<CompanyHires />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="interviews" element={<Interviews />} />
           <Route path="notifications" element={<CompanyNotifications />} />
         </Route>
       </Route>
@@ -118,6 +131,7 @@ export default function App() {
           <Route path="taxonomy" element={<AdminTaxonomy />} />
           <Route path="reviews" element={<AdminReviews />} />
           <Route path="pricing" element={<AdminPricing />} />
+          <Route path="insights" element={<AdminInsights />} />
         </Route>
       </Route>
 

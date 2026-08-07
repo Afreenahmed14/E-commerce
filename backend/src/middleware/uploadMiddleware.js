@@ -29,4 +29,19 @@ const uploadDocument = multer({
   fileFilter: fileFilter([...IMAGE_TYPES, ...DOCUMENT_TYPES]),
 });
 
-module.exports = { uploadImage, uploadDocument };
+// Added for the AI Career Chatbot / ATS Resume Checker: these accept resumes
+// as PDF, DOCX, or image, on top of the existing uploadImage/uploadDocument
+// exports above (which remain unchanged for their current callers).
+const RESUME_TYPES = [
+  ...IMAGE_TYPES,
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+
+const uploadResume = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  fileFilter: fileFilter(RESUME_TYPES),
+});
+
+module.exports = { uploadImage, uploadDocument, uploadResume };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiPlus, FiEdit, FiTrash2, FiUsers, FiPause, FiPlay } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiTrash2, FiUsers, FiPause, FiPlay, FiHelpCircle } from 'react-icons/fi';
 import { jobService } from '../../services/jobService';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
@@ -75,6 +75,9 @@ export default function MyJobs() {
                 </Link>
                 <Link to={`/company/dashboard/jobs/${job._id}/edit`}>
                   <Button size="sm" variant="secondary"><FiEdit /> Edit</Button>
+                </Link>
+                <Link to={`/company/dashboard/jobs/${job._id}/questions`}>
+                  <Button size="sm" variant="secondary"><FiHelpCircle /> Questions</Button>
                 </Link>
                 <Button size="sm" variant="secondary" onClick={() => toggleStatus(job)}>
                   {job.status === 'open' ? <><FiPause /> Close</> : <><FiPlay /> Reopen</>}

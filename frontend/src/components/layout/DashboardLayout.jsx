@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import {
   FiGrid, FiUser, FiBookmark, FiBell, FiUsers,
   FiBriefcase, FiShield, FiTag, FiStar, FiLogOut, FiMenu, FiX, FiAward, FiSettings, FiFileText,
-  FiCheckCircle,
+  FiCheckCircle, FiMessageCircle, FiCpu, FiVideo, FiTrendingUp,
 } from 'react-icons/fi';
 import { useAuth } from '../../hooks/useAuth';
 import HourlyRatePrompt from '../candidate/HourlyRatePrompt';
@@ -21,6 +21,10 @@ const NAV_CONFIG = {
     { to: '/jobs', label: 'Browse Jobs', icon: FiFileText },
     { to: '/candidate/dashboard/applications', label: 'My Applications', icon: FiBriefcase },
     { to: '/candidate/dashboard/hires', label: 'My Hires', icon: FiCheckCircle },
+    { to: '/candidate/dashboard/career-assistant', label: 'AI Career Assistant', icon: FiCpu },
+    { to: '/candidate/dashboard/ats-checker', label: 'ATS Resume Checker', icon: FiTrendingUp },
+    { to: '/candidate/dashboard/messages', label: 'Messages', icon: FiMessageCircle },
+    { to: '/candidate/dashboard/interviews', label: 'Interviews', icon: FiVideo },
     { to: '/candidate/dashboard/notifications', label: 'Notifications', icon: FiBell },
   ],
   company: [
@@ -31,6 +35,8 @@ const NAV_CONFIG = {
     { to: '/company/dashboard/subscription', label: 'Subscription', icon: FiAward },
     { to: '/company/dashboard/bookmarks', label: 'Bookmarked', icon: FiBookmark },
     { to: '/company/dashboard/hires', label: 'Hired Candidates', icon: FiCheckCircle },
+    { to: '/company/dashboard/messages', label: 'Messages', icon: FiMessageCircle },
+    { to: '/company/dashboard/interviews', label: 'Interviews', icon: FiVideo },
     { to: '/company/dashboard/notifications', label: 'Notifications', icon: FiBell },
   ],
   admin: [
@@ -41,6 +47,7 @@ const NAV_CONFIG = {
     { to: '/admin/dashboard/verifications', label: 'Verification', icon: FiShield },
     { to: '/admin/dashboard/taxonomy', label: 'Categories & Skills', icon: FiTag },
     { to: '/admin/dashboard/reviews', label: 'Reviews', icon: FiStar },
+    { to: '/admin/dashboard/insights', label: 'AI Insights', icon: FiTrendingUp },
     { to: '/admin/dashboard/pricing', label: 'Pricing', icon: FiSettings },
   ],
 };

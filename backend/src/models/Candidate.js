@@ -105,6 +105,9 @@ const candidateSchema = new mongoose.Schema(
       country: { type: String, trim: true },
       remote: { type: Boolean, default: true },
     },
+    // Feature 2/3 — most recent ATS / job-matching analysis for this
+    // candidate's resume. Kept as a reference to the ResumeAnalysis doc.
+    resumeAnalysis: { type: mongoose.Schema.Types.ObjectId, ref: 'ResumeAnalysis', default: null },
   },
   { timestamps: true }
 );

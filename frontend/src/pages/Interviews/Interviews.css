@@ -1,0 +1,91 @@
+.interviews-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.interviews-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-4);
+}
+
+.interview-card { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+
+.interview-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.interview-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.interview-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.interview-info { flex: 1; min-width: 0; }
+.interview-info strong { display: block; font-size: var(--font-size-sm); }
+.interview-info .text-muted { font-size: 0.8rem; }
+
+.interview-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  align-items: center;
+}
+.interview-details span { display: inline-flex; align-items: center; gap: var(--space-1); }
+.interview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.interview-notes { font-size: var(--font-size-sm); }
+
+.interview-reschedule-request {
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  font-size: var(--font-size-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.interview-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.interview-datetime {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.interview-reschedule-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+}

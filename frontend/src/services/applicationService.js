@@ -1,7 +1,8 @@
 import api from './api';
 
 export const applicationService = {
-  apply: (jobId, coverLetter) => api.post('/applications', { jobId, coverLetter }).then((r) => r.data),
+  apply: (jobId, coverLetter, answers = []) =>
+    api.post('/applications', { jobId, coverLetter, answers }).then((r) => r.data),
   getMine: () => api.get('/applications/me').then((r) => r.data),
   withdraw: (id) => api.delete(`/applications/${id}`).then((r) => r.data),
   getForJob: (jobId) => api.get(`/applications/job/${jobId}`).then((r) => r.data),

@@ -1,5 +1,15 @@
+// require('dotenv').config();
+
+// const dns = require('dns');
+// dns.setServers(['8.8.8.8', '8.8.4.4']);
 require('dotenv').config();
 
+console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? "Loaded ✅" : "Missing ❌");
+console.log("OPENAI_MODEL:", process.env.OPENAI_MODEL || "Not Set");
+console.log("Current Working Directory:", process.cwd());
+
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -8,10 +18,13 @@ const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 
+const http = require('http');
 const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const { startSubscriptionExpiryJob } = require('./jobs/subscriptionExpiryJob');
 const { loadPricingOverrides } = require('./utils/loadPricingOverrides');
+const { initSocket } = require('./socket');
+const { setIo } = require('./services/notificationHelper');
 
 // Route modules
 const authRoutes = require('./routes/authRoutes');
@@ -27,6 +40,12 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const taxonomyRoutes = require('./routes/taxonomyRoutes');
+const chatbotRoutes = require('./routes/chatbotRoutes'); // Feature 1: AI Career Assistant
+const atsRoutes = require('./routes/atsRoutes'); // Feature 2: ATS Resume Checker
+const conversationRoutes = require('./routes/conversationRoutes'); // Feature 4: Company <-> Candidate Chat
+const mcqRoutes = require('./routes/mcqRoutes'); // Features 5 & 6: Job Application Questions + AI-generated MCQs
+const interviewRoutes = require('./routes/interviewRoutes'); // Feature 9: Interview Management
+const adminInsightsRoutes = require('./routes/adminInsightsRoutes'); // Feature 10: Admin AI Dashboard
 
 const app = express();
 
@@ -89,6 +108,12 @@ app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/stats', statsRoutes);
 app.use('/api/v1/taxonomy', taxonomyRoutes);
+app.use('/api/v1/chatbot', chatbotRoutes); // Feature 1: AI Career Assistant
+app.use('/api/v1/ats', atsRoutes); // Feature 2: ATS Resume Checker
+app.use('/api/v1/conversations', conversationRoutes); // Feature 4: Company <-> Candidate Chat
+app.use('/api/v1/companies', mcqRoutes); // Features 5 & 6: Job Application Questions (company management)
+app.use('/api/v1/interviews', interviewRoutes); // Feature 9: Interview Management
+app.use('/api/v1/admin-insights', adminInsightsRoutes); // Feature 10: Admin AI Dashboard
 
 // ---- Error Handling ----
 app.use(notFound);
@@ -101,9 +126,15 @@ const startServer = async () => {
     await connectDB();
     await loadPricingOverrides();
 
-    app.listen(PORT, () => {
+    // Create an HTTP server and attach Socket.IO for realtime features
+    // (chat, presence, notifications) — see socket/index.js.
+    const server = http.createServer(app);
+    const io = initSocket(server);
+    setIo(io); // let notificationHelper push realtime events
+
+    server.listen(PORT, () => {
       console.log(
-        `[Server] HourlyRecruit API listening on port ${PORT} (${process.env.NODE_ENV})`
+        `[Server] HourlyRecruit API + Socket.IO listening on port ${PORT} (${process.env.NODE_ENV})`
       );
     });
 

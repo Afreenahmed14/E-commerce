@@ -54,6 +54,11 @@ const jobSchema = new mongoose.Schema(
     },
 
     applicationsCount: { type: Number, default: 0 },
+
+    // Feature 5/6 — application questionnaire. When non-empty, candidates
+    // must answer these (JobQuestion docs) before their application counts.
+    hasQuestionnaire: { type: Boolean, default: false },
+    questionnaireCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

@@ -126,6 +126,7 @@ export default function CareerAssistant() {
     setMessages((prev) => [...prev.filter((m) => m._id !== optimistic._id), optimistic, assistantPlaceholder]);
 
     let fullReply = '';
+    let hadError = false;
     await streamChatbot(activeId, text, (ev) => {
       if (ev.type === 'token') {
         fullReply += ev.data.token;
@@ -133,16 +134,25 @@ export default function CareerAssistant() {
           m._id === assistantPlaceholder._id ? { ...m, content: m.content + ev.data.token } : m
         ));
       } else if (ev.type === 'error') {
+        hadError = true;
         setMessages((prev) => prev.map((m) =>
-          m._id === assistantPlaceholder._id ? { ...m, content: `⚠️ ${ev.data.message}`, streaming: false } : m
+          m._id === assistantPlaceholder._id
+            ? { ...m, content: `⚠️ ${ev.data?.message || ev.message || 'AI assistant error'}`, streaming: false }
+            : m
         ));
       }
     });
 
-    // Finalize the assistant message once streaming completes.
-    setMessages((prev) => prev.map((m) =>
-      m._id === assistantPlaceholder._id ? { ...m, content: fullReply, streaming: false } : m
-    ));
+    // Finalize the assistant message once streaming completes. Skip this if
+    // an error event already set the bubble's content — otherwise the error
+    // gets silently overwritten with the still-empty fullReply.
+    if (!hadError) {
+      setMessages((prev) => prev.map((m) =>
+        m._id === assistantPlaceholder._id
+          ? { ...m, content: fullReply || m.content || '⚠️ No response received from AI.', streaming: false }
+          : m
+      ));
+    }
     setSending(false);
 
     // Refresh conversations to reflect the new title / timestamp.

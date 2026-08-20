@@ -40,13 +40,19 @@ export const streamChatbot = async (conversationId, content, onEvent) => {
       credentials: 'include',
     });
   } catch (err) {
-    onEvent({ type: 'error', message: 'Network error — please check your connection.' });
+    onEvent({
+      type: 'error',
+      data: { message: 'Network error — please check your connection.' },
+    });
     return;
   }
 
   if (!res.ok || !res.body) {
     const err = await res.json().catch(() => ({}));
-    onEvent({ type: 'error', message: err.message || 'Failed to contact AI assistant.' });
+    onEvent({
+      type: 'error',
+      data: { message: err.message || 'Failed to contact AI assistant.' },
+    });
     return;
   }
 
@@ -97,6 +103,9 @@ export const streamChatbot = async (conversationId, content, onEvent) => {
     }
     flushFrame();
   } catch {
-    onEvent({ type: 'error', message: 'Connection interrupted while streaming.' });
+    onEvent({
+      type: 'error',
+      data: { message: 'Connection interrupted while streaming.' },
+    });
   }
 };

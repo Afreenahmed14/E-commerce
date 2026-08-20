@@ -1,6 +1,7 @@
 .assistant-page {
   display: flex;
-  height: calc(100vh - 60px);
+  flex: 1;
+  min-height: 0;
   gap: var(--space-4);
   padding: var(--space-4);
   background: var(--color-surface);

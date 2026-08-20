@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FiArrowLeft, FiDownload, FiStar, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { FiArrowLeft, FiDownload, FiStar, FiChevronDown, FiChevronUp, FiMessageSquare, FiVideo } from 'react-icons/fi';
 import { applicationService } from '../../services/applicationService';
+import { conversationService } from '../../services/conversationService';
+import { interviewService } from '../../services/interviewService';
 import { asDownloadUrl } from '../../utils/fileUrl';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
+import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import StarRating from '../../components/common/StarRating';
+import ScheduleMeetingModal from '../../components/common/ScheduleMeetingModal';
+import { useAlert } from '../../context/AlertContext';
 import { formatDate } from '../../utils/formatters';
 
 const STATUS_OPTIONS = ['applied', 'shortlisted', 'rejected', 'hired'];
@@ -15,10 +20,15 @@ const STATUS_VARIANT = { applied: 'default', shortlisted: 'info', hired: 'succes
 
 export default function JobApplicants() {
   const { jobId } = useParams();
+  const navigate = useNavigate();
+  const { showError, showSuccess } = useAlert();
   const [job, setJob] = useState(null);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const [messagingId, setMessagingId] = useState(null);
+  const [schedulingFor, setSchedulingFor] = useState(null); // application object, or null
+  const [scheduling, setScheduling] = useState(false);
 
   useEffect(() => {
     applicationService.getForJob(jobId)
@@ -36,6 +46,31 @@ export default function JobApplicants() {
     } catch {
       // Refetch on failure so the dropdown doesn't lie about actual state.
       applicationService.getForJob(jobId).then((res) => setApplications(res.data.applications));
+    }
+  };
+
+  const handleMessage = async (candidateId) => {
+    setMessagingId(candidateId);
+    try {
+      const res = await conversationService.start({ candidateId, jobId });
+      navigate(`/company/dashboard/messages?conv=${res.data.conversation._id}`);
+    } catch (err) {
+      showError(err.response?.data?.message || 'Could not start conversation.');
+    } finally {
+      setMessagingId(null);
+    }
+  };
+
+  const handleScheduleInterview = async (payload) => {
+    setScheduling(true);
+    try {
+      await interviewService.schedule({ ...payload, applicationId: schedulingFor._id });
+      showSuccess('Interview invite sent.');
+      setSchedulingFor(null);
+    } catch (err) {
+      showError(err.response?.data?.message || 'Could not schedule interview.');
+    } finally {
+      setScheduling(false);
     }
   };
 
@@ -69,6 +104,13 @@ export default function JobApplicants() {
                     <h3 style={{ margin: '0 0 2px' }}>{app.candidateId?.name}</h3>
                     <p className="text-muted" style={{ margin: 0 }}>{app.candidateId?.headline}</p>
                     <StarRating value={app.candidateId?.rating} size={13} />
+                    {app.candidateId?.skills?.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
+                        {app.candidateId.skills.slice(0, 6).map((skill) => (
+                          <Badge key={skill} variant="default">{skill}</Badge>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -100,6 +142,23 @@ export default function JobApplicants() {
                 >
                   {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
+
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleMessage(app.candidateId?._id)}
+                  loading={messagingId === app.candidateId?._id}
+                >
+                  <FiMessageSquare /> Message
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={() => setSchedulingFor(app)}
+                >
+                  <FiVideo /> Schedule Interview
+                </Button>
 
                 {app.answers?.length > 0 && (
                   <button
@@ -142,6 +201,16 @@ export default function JobApplicants() {
           ))}
         </div>
       )}
+
+      <ScheduleMeetingModal
+        isOpen={!!schedulingFor}
+        onClose={() => setSchedulingFor(null)}
+        onSubmit={handleScheduleInterview}
+        submitting={scheduling}
+        withLabel={schedulingFor?.candidateId?.name}
+        defaultTitle={`Interview for ${job?.title || 'this role'}`}
+        defaultDuration={60}
+      />
     </div>
   );
 }

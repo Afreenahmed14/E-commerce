@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { FiSend, FiPaperclip, FiSearch, FiBellOff, FiBell, FiTrash2, FiSmile } from 'react-icons/fi';
 import { conversationService } from '../../services/conversationService';
@@ -17,6 +18,7 @@ const EMOJIS = ['👍', '❤️', '😂', '🎉', '🔥', '👏', '🙏', '💪'
 export default function Messages() {
   const { user, role } = useAuth();
   const { showError } = useAlert();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [conversations, setConversations] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -76,7 +78,7 @@ export default function Messages() {
     return () => socket.disconnect();
   }, [user, activeId, role, loadConversations]);
 
-  const openConversation = async (id) => {
+  const openConversation = useCallback(async (id) => {
     setActiveId(id);
     setMessages([]);
     socketRef.current?.emit('chat:join', id);
@@ -89,7 +91,21 @@ export default function Messages() {
     } catch (err) {
       showError(err.response?.data?.message || 'Could not load messages.');
     }
-  };
+  }, [showError]);
+
+  // Deep-link support: /messages?conv=<id> opens (and creates, if just
+  // started elsewhere) a specific conversation, e.g. from a "Message"
+  // button on a job or candidate/company profile page.
+  useEffect(() => {
+    const conv = searchParams.get('conv');
+    if (!conv || loading) return;
+    openConversation(conv);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete('conv');
+      return next;
+    }, { replace: true });
+  }, [searchParams, loading, openConversation, setSearchParams]);
 
   const handleSend = async (e) => {
     e?.preventDefault();

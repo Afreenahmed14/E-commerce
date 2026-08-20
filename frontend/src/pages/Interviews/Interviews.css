@@ -4,6 +4,105 @@
   gap: var(--space-4);
 }
 
+.interviews-tabs {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.interviews-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-3) var(--space-2);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+}
+.interviews-tab-btn:hover { color: var(--color-primary); }
+.interviews-tab-btn.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+
+.partner-meetings-tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.partner-meetings-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.partner-meetings-picker select {
+  min-width: 220px;
+}
+
+.interviews-tab-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.company-view-tabs {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.applied-candidates-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.applied-candidates-panel > select {
+  max-width: 320px;
+}
+
+.applied-candidates-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.applied-candidate-card {
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.applied-candidate-info {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.applied-candidate-info strong { font-size: var(--font-size-sm); }
+
+.applicant-mini-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.applicant-mini-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
 .interviews-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));

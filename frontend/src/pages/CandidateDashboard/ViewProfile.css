@@ -1,0 +1,116 @@
+.view-profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 820px;
+}
+
+.view-profile-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.view-profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(37, 99, 235, 0.2);
+  flex-shrink: 0;
+}
+
+.view-profile-hero-info {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.view-profile-hero-info h2 {
+  font-size: var(--font-size-xl);
+}
+
+.view-profile-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.view-profile-hero-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.view-profile-section {
+  padding: var(--space-5);
+}
+
+.view-profile-section h3 {
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-md);
+}
+
+.view-profile-skill-group {
+  margin-bottom: var(--space-3);
+}
+
+.view-profile-skill-group:last-child {
+  margin-bottom: 0;
+}
+
+.view-profile-skill-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-2);
+}
+
+.view-profile-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.view-profile-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.view-profile-links span,
+.view-profile-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+}
+
+.view-profile-links a {
+  color: var(--color-primary);
+}
+
+.view-profile-links a:hover {
+  text-decoration: underline;
+}
+
+.view-profile-resume-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.view-profile-resume-link:hover {
+  text-decoration: underline;
+}

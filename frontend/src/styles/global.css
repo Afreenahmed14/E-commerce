@@ -8,28 +8,38 @@
 
 html {
   scroll-behavior: smooth;
+  height: 100%;
   /* Zoom out the entire app UI. Adjust this value to zoom more/less
      (e.g. 0.9 = 90%, 0.75 = 75%). zoom is supported in Chrome, Edge,
      and Safari; Firefox fallback below handles the rest. */
-  zoom: 0.85;
+  zoom: 0.8;
 }
 
 @supports not (zoom: 1) {
   /* Firefox fallback: scale the whole document from the top-left corner */
   html {
-    transform: scale(0.85);
+    transform: scale(0.8);
     transform-origin: top left;
-    width: 117.65%; /* 1 / 0.85, keeps content filling the viewport width */
+    width: 125%; /* 1 / 0.8, keeps content filling the viewport width */
   }
 }
 
 body {
   font-family: var(--font-family);
-  background-color: var(--color-bg);
+  background-color: #f4f8ff;
   color: var(--color-text);
   font-size: var(--font-size-base);
   line-height: 1.6;
   transition: background-color var(--transition), color var(--transition);
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
 }
 
 a {

@@ -30,6 +30,8 @@ const interviewSchema = new mongoose.Schema(
       note: { type: String, trim: true, maxlength: 500, default: '' },
     },
     notes: { type: String, trim: true, maxlength: 1000, default: '' },
+    // Reminder bookkeeping so the reminder job never double-sends.
+    reminderSentAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

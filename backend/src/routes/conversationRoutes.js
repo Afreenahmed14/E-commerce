@@ -25,7 +25,8 @@ router.get('/:id/messages', getMessages);
 
 router.post(
   '/',
-  body('candidateId').isMongoId(),
+  body('candidateId').optional({ nullable: true }).isMongoId(),
+  body('companyId').optional({ nullable: true }).isMongoId(),
   body('jobId').optional({ nullable: true }).isMongoId(),
   validateRequest,
   startConversation

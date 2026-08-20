@@ -1,14 +1,14 @@
-const { getTransporter } = require('../config/nodemailer');
+const { sendBrevoEmail } = require('../config/brevo');
 
 /**
  * Centralized email service (Feature 8). Every transactional email the
- * platform sends goes through here so the transport, sender identity, and
- * HTML/plain-text structure live in exactly one place. Uses the shared
- * Nodemailer transport from config/nodemailer.js; silently skips when SMTP
- * is not configured (dev/local), so the app never hard-fails on email.
+ * platform sends goes through here so the sender identity and HTML/
+ * plain-text structure live in exactly one place. Sends via Brevo's
+ * transactional email API (see config/brevo.js); silently skips (logged)
+ * when BREVO_API_KEY / EMAIL_USER aren't configured, so the app never
+ * hard-fails on email.
  */
 
-const FROM = process.env.EMAIL_FROM || 'HourlyRecruit <no-reply@hourlyrecruit.com>';
 const APP_NAME = 'HourlyRecruit';
 
 /** Builds a simple responsive HTML email shell from a title + body HTML. */
@@ -21,17 +21,24 @@ const shell = (title, bodyHtml) => `
 `;
 
 /**
- * Core send helper. Resolves recipient email, uses the shared transport,
- * and logs a warning instead of throwing when email is disabled.
+ * Core send helper. Delegates to the Brevo API client; logs a warning
+ * instead of throwing when email is disabled or the send fails, so a
+ * broken/unconfigured email integration never breaks the request that
+ * triggered it (e.g. an interview still gets scheduled even if the
+ * confirmation email can't go out).
  */
 const sendEmail = async ({ to, subject, text, html }) => {
-  const transporter = getTransporter();
-  if (!transporter) {
-    console.warn(`[emailService] Email skipped (SMTP unconfigured): ${subject} -> ${to}`);
-    return { skipped: true, subject, to };
+  try {
+    const result = await sendBrevoEmail({ to, subject, text, html });
+    if (result.skipped) {
+      console.warn(`[emailService] Email skipped (Brevo unconfigured): ${subject} -> ${to}`);
+      return { skipped: true, subject, to };
+    }
+    return { skipped: false, ...result };
+  } catch (err) {
+    console.error(`[emailService] Failed to send "${subject}" to ${to}:`, err.message);
+    return { skipped: true, error: err.message, subject, to };
   }
-  const info = await transporter.sendMail({ from: FROM, to, subject, text, html });
-  return { messageId: info.messageId, skipped: false };
 };
 
 /** Application submitted — candidate gets a confirmation. */

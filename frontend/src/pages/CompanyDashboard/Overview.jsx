@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiBriefcase, FiBookmark, FiEdit, FiStar } from 'react-icons/fi';
+import { FiBriefcase, FiBookmark, FiStar } from 'react-icons/fi';
 import { companyService } from '../../services/companyService';
 import Card from '../../components/common/Card';
 import Loader from '../../components/common/Loader';
@@ -24,7 +24,6 @@ export default function CompanyOverview() {
     <div>
       <div className="dashboard-header">
         <h1>Welcome, {company?.companyName}</h1>
-        <Link to="/company/dashboard/profile"><Button size="sm"><FiEdit /> Edit Profile</Button></Link>
       </div>
 
       <div className="stat-grid stagger-children">

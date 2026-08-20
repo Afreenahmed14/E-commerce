@@ -1,25 +1,47 @@
 .dashboard-shell {
-  display: flex;
+  width: 100%;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  background: #cfe8f5;
+}
+
+.dashboard-main {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - var(--header-height));
+  overflow: visible;
 }
 
 .dashboard-sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
+  width: 250px;
+  min-width: 250px;
+  flex: 0 0 250px;
+  background: linear-gradient(180deg, #cfe8f5 0%, #b8dcef 100%);
+  border-right: 1px solid rgba(37, 99, 235, 0.18);
   display: flex;
   flex-direction: column;
-  padding: var(--space-5);
+  padding: var(--space-3);
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: var(--header-height);
+  height: calc(125vh - var(--header-height));
+  overflow: hidden;
+  z-index: 50;
+}
+
+.dashboard-sidebar .dashboard-brand {
+  color: #0b2740;
+}
+
+.dashboard-sidebar .dashboard-nav-link {
+  color: #1e3a5f;
 }
 
 .dashboard-brand {
   font-size: var(--font-size-lg);
   font-weight: 800;
-  margin-bottom: var(--space-6);
 }
 
 .dashboard-brand img {
@@ -32,85 +54,268 @@
   color: var(--color-primary);
 }
 
-.dashboard-user {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding-bottom: var(--space-5);
-  margin-bottom: var(--space-5);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.dashboard-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--gradient-primary);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.dashboard-user-name {
-  font-weight: 600;
-  font-size: var(--font-size-sm);
-}
-
-.dashboard-user-role {
-  font-size: var(--font-size-xs);
-  text-transform: capitalize;
-}
-
 .dashboard-nav {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  flex: 1;
+  gap: 4px;
+  padding: var(--space-2);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .dashboard-nav-link {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-3);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-muted);
+  padding: 9px var(--space-3);
+  border-radius: var(--radius-md);
+  color: #1e3a5f;
   font-size: var(--font-size-sm);
   font-weight: 500;
-  transition: background var(--transition), color var(--transition);
+  position: relative;
+  overflow: hidden;
+  transition: background 220ms ease, color 220ms ease, transform 220ms ease, box-shadow 220ms ease;
 }
 
 .dashboard-nav-link:hover {
-  background: var(--color-primary-light);
-  color: var(--color-primary-dark);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(37, 99, 235, 0.35);
+  color: #1d4ed8;
+  transform: translateX(4px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.dashboard-nav-link:not(:hover) {
+  border: 1px solid transparent;
 }
 
 .dashboard-nav-link.active {
   background: var(--gradient-primary);
   color: #fff;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
 }
 
 .dashboard-logout {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  background: none;
-  border: none;
-  color: var(--color-danger);
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: var(--radius-md);
+  color: #b91c1c;
   font-weight: 600;
   font-size: var(--font-size-sm);
   padding: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: auto;
+  transition: background 220ms ease, color 220ms ease, transform 220ms ease;
+}
+
+.dashboard-logout:hover {
+  background: rgba(220, 38, 38, 0.16);
+  color: #991b1b;
+  transform: translateY(-2px);
 }
 
 .dashboard-content {
   flex: 1;
-  padding: var(--space-6) var(--space-8);
+  width: calc(100% - 250px);
+  min-width: 0;
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  flex-direction: column;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow: visible;
+  background-color: #cfe8f5;
+  background-image:
+    radial-gradient(ellipse 220px 70px at 12% 10%, rgba(255, 255, 255, 0.85), transparent 70%),
+    radial-gradient(ellipse 180px 60px at 30% 6%, rgba(255, 255, 255, 0.7), transparent 70%),
+    radial-gradient(ellipse 260px 80px at 80% 14%, rgba(255, 255, 255, 0.8), transparent 70%),
+    radial-gradient(ellipse 200px 65px at 95% 4%, rgba(255, 255, 255, 0.6), transparent 70%),
+    linear-gradient(180deg, #cfe8f5 0%, #eaf5fb 55%, #f4f8ff 100%);
+  background-repeat: no-repeat;
+  background-attachment: local, local, local, local, local;
+  color: #0b1220;
+}
+
+.dashboard-content > .fade-in {
+  width: 100%;
+  min-height: 100%;
+  padding: var(--space-6) var(--space-8) 60px;
+  box-sizing: border-box;
+}
+
+.dashboard-topbar-desktop {
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  width: 100%;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-6);
+  background: linear-gradient(90deg, #bcdcee 0%, #a9d2ea 100%);
+  border-bottom: 1px solid rgba(37, 99, 235, 0.22);
+  z-index: 40;
+  overflow: hidden;
+}
+
+.dashboard-navbar-clouds {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.navbar-cloud {
+  position: absolute;
+  top: 50%;
+  font-size: 22px;
+  opacity: 0;
+  filter: drop-shadow(0 2px 3px rgba(255, 255, 255, 0.4));
+  animation: navbar-cloud-drift linear infinite;
+}
+
+.navbar-cloud-1 {
+  top: 22%;
+  font-size: 20px;
+  animation-duration: 26s;
+  animation-delay: 0s;
+}
+
+.navbar-cloud-2 {
+  top: 55%;
+  font-size: 26px;
+  animation-duration: 34s;
+  animation-delay: -9s;
+}
+
+.navbar-cloud-3 {
+  top: 75%;
+  font-size: 17px;
+  animation-duration: 21s;
+  animation-delay: -14s;
+}
+
+.navbar-cloud-4 {
+  top: 38%;
+  font-size: 23px;
+  animation-duration: 30s;
+  animation-delay: -22s;
+}
+
+@keyframes navbar-cloud-drift {
+  0% {
+    left: -8%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+  10% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateY(-4px) scale(1);
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    left: 108%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-cloud {
+    animation: none;
+    display: none;
+  }
+}
+}
+
+.dashboard-navbar-logo {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-navbar-logo img {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+.dashboard-navbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-topbar-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-primary-dark);
+  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+
+.dashboard-topbar-icon-btn:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.2);
+}
+
+.dashboard-view-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 9px var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.dashboard-view-profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.32);
+}
+
+@media (max-width: 900px) {
+  .dashboard-topbar-desktop {
+    padding: 0 var(--space-4);
+  }
+}
+
+/* Pages that opt into filling the remaining viewport height (Messages,
+   Career Assistant, Interviews calendar, etc.) do so by being flex:1
+   inside this column — see their own CSS. Pages that just render normal
+   content (Overview, Profile, tables...) are unaffected: they stack in
+   the same column direction they always rendered in, at their natural
+   height, and the page scrolls as a whole. */
+.dashboard-content > .fade-in {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-header {
@@ -190,6 +395,20 @@
 @media (max-width: 900px) {
   .dashboard-shell {
     display: block;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .dashboard-main {
+    display: block;
+    overflow: visible;
+  }
+
+  .dashboard-content,
+  .dashboard-content > .fade-in {
+    display: block;
+    overflow-y: visible;
   }
 
   .dashboard-topbar {
@@ -203,6 +422,10 @@
     position: sticky;
     top: 0;
     z-index: 35;
+  }
+
+  .dashboard-topbar-desktop {
+    display: none;
   }
 
   .dashboard-menu-btn {
@@ -247,7 +470,8 @@
   .dashboard-brand {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
+    margin-bottom: var(--space-3);
   }
 
   .dashboard-sidebar-close {
@@ -261,12 +485,20 @@
   }
 
   .dashboard-content {
+    width: 100%;
+  }
+
+  .dashboard-content > .fade-in {
     padding: var(--space-4);
   }
 }
 
 @media (max-width: 480px) {
-  .dashboard-content {
+  .dashboard-content > .fade-in {
     padding: var(--space-3);
+  }
+
+  .dashboard-topbar-desktop {
+    padding: 0 var(--space-4);
   }
 }

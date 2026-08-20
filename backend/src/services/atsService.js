@@ -91,31 +91,34 @@ const analyzeResume = async (buffer, mimetype, originalName) => {
 
 /**
  * Computes a match % between an extracted resume and a specific job.
- * Uses the AI for a nuanced explanation + a deterministic keyword overlap
- * as a bounded, fast fallback.
+ * Purely deterministic keyword-overlap scoring — no AI call per job — so
+ * matching N jobs costs 0 additional AI calls (only the single ATS
+ * analysis call above hits the AI).
  */
 const matchResumeToJob = async (extractedText, job) => {
   const resumeLower = extractedText.toLowerCase();
   const jobSkills = (job.skills || []).map((s) => s.toLowerCase());
-  const matched = jobSkills.filter((s) => resumeLower.includes(s));
-  const missing = jobSkills.filter((s) => !resumeLower.includes(s));
+  const matched = jobSkills.filter((skill) => resumeLower.includes(skill));
+  const missing = jobSkills.filter((skill) => !resumeLower.includes(skill));
   const keywordScore = jobSkills.length
     ? Math.round((matched.length / jobSkills.length) * 100)
     : 50;
-
-  const aiResult = await extractJSON(
-    'You are a job-matching expert. Given a resume and a job, return STRICT JSON: { "matchPercentage": 0-100, "topSkillsMatch": [], "missingSkills": [], "summary": "one sentence" }.',
-    `Resume:\n"""\n${extractedText}\n"""\n\nJob title: ${job.title}\nJob description:\n${job.description}\nJob skills: ${(job.skills || []).join(', ')}`
-  ).catch(() => null);
 
   return {
     jobId: job._id,
     jobTitle: job.title,
     companyName: job.companyName || '',
-    matchPercentage: clamp(aiResult?.matchPercentage, keywordScore),
-    topSkillsMatch: aiResult?.topSkillsMatch || matched,
-    missingSkills: aiResult?.missingSkills || missing,
-    summary: aiResult?.summary || '',
+    matchPercentage: keywordScore,
+    topSkillsMatch: matched,
+    missingSkills: missing,
+    summary:
+      keywordScore >= 80
+        ? 'Excellent match for this job.'
+        : keywordScore >= 60
+        ? 'Good match for this job.'
+        : keywordScore >= 40
+        ? 'Average match. Improve the missing skills.'
+        : 'Low match. Consider improving the missing skills before applying.',
   };
 };
 

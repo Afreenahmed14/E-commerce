@@ -97,30 +97,37 @@ const getMessages = asyncHandler(async (req, res) => {
 
 /**
  * POST /api/v1/conversations
- * Company starts (or reuses) a conversation with a candidate about a job.
- * Body: { candidateId, jobId }
+ * Either side can start (or reuse) a conversation about a job:
+ *   - Company caller sends { candidateId, jobId? }
+ *   - Candidate caller sends { companyId, jobId? }
  */
 const startConversation = asyncHandler(async (req, res) => {
-  if (req.user.role !== 'company') {
-    throw ApiError.forbidden('Only companies can start a new conversation');
-  }
-  const { candidateId, jobId } = req.body;
+  const { jobId } = req.body;
+  let candidateId;
+  let companyId;
 
-  const candidate = await Candidate.findById(candidateId);
-  if (!candidate) throw ApiError.notFound('Candidate not found');
-
-  let existing = null;
-  if (jobId) {
-    existing = await Conversation.findOne({ candidateId, companyId: req.user._id, jobId: jobId || null });
+  if (req.user.role === 'company') {
+    candidateId = req.body.candidateId;
+    companyId = req.user._id;
+    if (!candidateId) throw ApiError.badRequest('candidateId is required');
+    const candidate = await Candidate.findById(candidateId);
+    if (!candidate) throw ApiError.notFound('Candidate not found');
+  } else if (req.user.role === 'candidate') {
+    candidateId = req.user._id;
+    companyId = req.body.companyId;
+    if (!companyId) throw ApiError.badRequest('companyId is required');
+    const company = await Company.findById(companyId);
+    if (!company) throw ApiError.notFound('Company not found');
   } else {
-    existing = await Conversation.findOne({ candidateId, companyId: req.user._id, jobId: null });
+    throw ApiError.forbidden('Only candidates and companies can start a conversation');
   }
 
+  const existing = await Conversation.findOne({ candidateId, companyId, jobId: jobId || null });
   if (existing) return new ApiResponse(200, { conversation: existing }, 'Conversation already exists').send(res);
 
   const conversation = await Conversation.create({
     candidateId,
-    companyId: req.user._id,
+    companyId,
     jobId: jobId || null,
   });
 

@@ -174,6 +174,7 @@ const confirmReschedule = asyncHandler(async (req, res) => {
   interview.scheduledAt = scheduledAt;
   interview.status = 'accepted';
   interview.rescheduleRequest = { proposedAt: null, note: '' };
+  interview.reminderSentAt = null;
   await interview.save();
 
   const application = await Application.findById(interview.applicationId)

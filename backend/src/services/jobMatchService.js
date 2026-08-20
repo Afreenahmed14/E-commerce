@@ -34,7 +34,15 @@ const matchResumeWithAllJobs = async (extractedText) => {
   const companyMap = {};
   companies.forEach((c) => { companyMap[c._id.toString()] = c.companyName; });
 
-  const withCompany = jobs.map((j) => ({ ...j, companyName: companyMap[j.companyId?.toString()] || '' }));
+  // const withCompany = jobs.map((j) => ({ ...j, companyName: companyMap[j.companyId?.toString()] || '' }));
+
+  const withCompany = jobs
+  .map((j) => ({
+    ...j,
+    companyName: companyMap[j.companyId?.toString()] || "",
+  }))
+  .slice(0, 3);
+  
 
   // Compute matches for each job. AI calls are the expensive part, so we
   // cap the number of jobs evaluated per request to keep latency bounded;

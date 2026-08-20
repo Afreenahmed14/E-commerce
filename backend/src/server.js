@@ -4,8 +4,8 @@
 // dns.setServers(['8.8.8.8', '8.8.4.4']);
 require('dotenv').config();
 
-console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? "Loaded ✅" : "Missing ❌");
-console.log("OPENAI_MODEL:", process.env.OPENAI_MODEL || "Not Set");
+console.log("GROQ_API_KEY:", process.env.GROQ_API_KEY ? "Loaded ✅" : "Missing ❌");
+console.log("GROQ_MODEL:", process.env.GROQ_MODEL || "Not Set");
 console.log("Current Working Directory:", process.cwd());
 
 const dns = require('dns');
@@ -22,6 +22,7 @@ const http = require('http');
 const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const { startSubscriptionExpiryJob } = require('./jobs/subscriptionExpiryJob');
+const { startMeetingReminderJob } = require('./jobs/meetingReminderJob');
 const { loadPricingOverrides } = require('./utils/loadPricingOverrides');
 const { initSocket } = require('./socket');
 const { setIo } = require('./services/notificationHelper');
@@ -45,6 +46,7 @@ const atsRoutes = require('./routes/atsRoutes'); // Feature 2: ATS Resume Checke
 const conversationRoutes = require('./routes/conversationRoutes'); // Feature 4: Company <-> Candidate Chat
 const mcqRoutes = require('./routes/mcqRoutes'); // Features 5 & 6: Job Application Questions + AI-generated MCQs
 const interviewRoutes = require('./routes/interviewRoutes'); // Feature 9: Interview Management
+const partnerMeetingRoutes = require('./routes/partnerMeetingRoutes'); // Feature 9b: Candidate <-> Project Partner meetings
 const adminInsightsRoutes = require('./routes/adminInsightsRoutes'); // Feature 10: Admin AI Dashboard
 
 const app = express();
@@ -113,6 +115,7 @@ app.use('/api/v1/ats', atsRoutes); // Feature 2: ATS Resume Checker
 app.use('/api/v1/conversations', conversationRoutes); // Feature 4: Company <-> Candidate Chat
 app.use('/api/v1/companies', mcqRoutes); // Features 5 & 6: Job Application Questions (company management)
 app.use('/api/v1/interviews', interviewRoutes); // Feature 9: Interview Management
+app.use('/api/v1/partner-meetings', partnerMeetingRoutes); // Feature 9b: Candidate <-> Project Partner meetings
 app.use('/api/v1/admin-insights', adminInsightsRoutes); // Feature 10: Admin AI Dashboard
 
 // ---- Error Handling ----
@@ -140,6 +143,7 @@ const startServer = async () => {
 
     if (process.env.NODE_ENV !== 'test') {
       startSubscriptionExpiryJob();
+      startMeetingReminderJob();
     }
   } catch (err) {
     console.error('[Server] Failed to start:', err);

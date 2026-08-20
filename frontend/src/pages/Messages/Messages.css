@@ -1,6 +1,7 @@
 .messages-page {
   display: flex;
-  height: calc(100vh - 90px);
+  flex: 1;
+  min-height: 0;
   gap: var(--space-4);
 }
 

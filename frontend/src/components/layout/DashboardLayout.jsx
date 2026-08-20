@@ -1,9 +1,9 @@
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import {
   FiGrid, FiUser, FiBookmark, FiBell, FiUsers,
   FiBriefcase, FiShield, FiTag, FiStar, FiLogOut, FiMenu, FiX, FiAward, FiSettings, FiFileText,
-  FiCheckCircle, FiMessageCircle, FiCpu, FiVideo, FiTrendingUp,
+  FiCheckCircle, FiMessageCircle, FiCpu, FiVideo, FiTrendingUp, FiClock,
 } from 'react-icons/fi';
 import { useAuth } from '../../hooks/useAuth';
 import HourlyRatePrompt from '../candidate/HourlyRatePrompt';
@@ -15,29 +15,18 @@ import logo from '../../assets/logo.png';
 const NAV_CONFIG = {
   candidate: [
     { to: '/candidate/dashboard', label: 'Overview', icon: FiGrid, end: true },
-    { to: '/candidate/dashboard/profile', label: 'My Profile', icon: FiUser },
     { to: '/candidate/dashboard/subscription', label: 'Subscription', icon: FiAward },
     { to: '/browse', label: 'Find Project Partners', icon: FiUsers },
     { to: '/jobs', label: 'Browse Jobs', icon: FiFileText },
-    { to: '/candidate/dashboard/applications', label: 'My Applications', icon: FiBriefcase },
-    { to: '/candidate/dashboard/hires', label: 'My Hires', icon: FiCheckCircle },
     { to: '/candidate/dashboard/career-assistant', label: 'AI Career Assistant', icon: FiCpu },
     { to: '/candidate/dashboard/ats-checker', label: 'ATS Resume Checker', icon: FiTrendingUp },
-    { to: '/candidate/dashboard/messages', label: 'Messages', icon: FiMessageCircle },
-    { to: '/candidate/dashboard/interviews', label: 'Interviews', icon: FiVideo },
-    { to: '/candidate/dashboard/notifications', label: 'Notifications', icon: FiBell },
   ],
   company: [
     { to: '/company/dashboard', label: 'Overview', icon: FiGrid, end: true },
     { to: '/browse', label: 'Browse Engineers', icon: FiUsers },
     { to: '/company/dashboard/jobs', label: 'My Jobs', icon: FiFileText },
-    { to: '/company/dashboard/profile', label: 'Company Profile', icon: FiBriefcase },
     { to: '/company/dashboard/subscription', label: 'Subscription', icon: FiAward },
     { to: '/company/dashboard/bookmarks', label: 'Bookmarked', icon: FiBookmark },
-    { to: '/company/dashboard/hires', label: 'Hired Candidates', icon: FiCheckCircle },
-    { to: '/company/dashboard/messages', label: 'Messages', icon: FiMessageCircle },
-    { to: '/company/dashboard/interviews', label: 'Interviews', icon: FiVideo },
-    { to: '/company/dashboard/notifications', label: 'Notifications', icon: FiBell },
   ],
   admin: [
     { to: '/admin/dashboard', label: 'Overview', icon: FiGrid, end: true },
@@ -131,47 +120,120 @@ export default function DashboardLayout() {
         >
           <FiMenu size={22} />
         </button>
-        <img src={logo} alt="Logo" className="dashboard-topbar-logo" />
+
+        <img
+          src={logo}
+          alt="Logo"
+          className="dashboard-topbar-logo"
+        />
       </div>
 
-      {sidebarOpen && <div className="dashboard-backdrop" onClick={() => setSidebarOpen(false)} />}
+      {/* Full-width desktop navbar — logo on the left, action icons +
+          View Profile on the right. Sits above the sidebar/content row. */}
+      <div className="dashboard-topbar-desktop">
+        <div className="dashboard-navbar-clouds" aria-hidden="true">
+          <span className="navbar-cloud navbar-cloud-1">☁️</span>
+          <span className="navbar-cloud navbar-cloud-2">☁️</span>
+          <span className="navbar-cloud navbar-cloud-3">☁️</span>
+          <span className="navbar-cloud navbar-cloud-4">☁️</span>
+        </div>
 
-      <aside className={`dashboard-sidebar ${sidebarOpen ? 'is-open' : ''}`}>
-        <div className="dashboard-brand">
+        <div className="dashboard-navbar-logo">
           <img src={logo} alt="Logo" />
+        </div>
+
+        <div className="dashboard-navbar-actions">
+          {(role === 'candidate' || role === 'company') && (
+            <>
+              <button
+                type="button"
+                className="dashboard-topbar-icon-btn"
+                onClick={() => navigate(`/${role}/dashboard/messages`)}
+                aria-label="Messages"
+              >
+                <FiMessageCircle size={19} />
+              </button>
+              <button
+                type="button"
+                className="dashboard-topbar-icon-btn"
+                onClick={() => navigate(`/${role}/dashboard/interviews`)}
+                aria-label="Interviews"
+              >
+                <FiVideo size={19} />
+              </button>
+              <button
+                type="button"
+                className="dashboard-topbar-icon-btn"
+                onClick={() => navigate(`/${role}/dashboard/history`)}
+                aria-label="History"
+              >
+                <FiClock size={19} />
+              </button>
+            </>
+          )}
           <button
             type="button"
-            className="dashboard-sidebar-close"
-            onClick={() => setSidebarOpen(false)}
-            aria-label="Close menu"
+            className="dashboard-topbar-icon-btn"
+            onClick={() => navigate(`/${role}/dashboard/notifications`)}
+            aria-label="Notifications"
           >
-            <FiX size={20} />
+            <FiBell size={19} />
           </button>
+          {(role === 'candidate' || role === 'company') && (
+            <Link to={`/${role}/dashboard/profile`} className="dashboard-view-profile-btn">
+              <FiUser size={16} />
+              <span>View Profile</span>
+            </Link>
+          )}
         </div>
-        <div className="dashboard-user">
-          <div className="dashboard-avatar">{user?.name?.[0]?.toUpperCase()}</div>
-          <div>
-            <p className="dashboard-user-name">{user?.name}</p>
-            <p className="dashboard-user-role text-muted">{role}</p>
-          </div>
-        </div>
-        <nav className="dashboard-nav">
-          {navItems.map(({ to, label, icon: Icon, end }) => (
-            <NavLink key={to} to={to} end={end} className="dashboard-nav-link" onClick={() => setSidebarOpen(false)}>
-              <Icon size={18} />
-              <span>{label}</span>
-            </NavLink>
-          ))}
-        </nav>
-        <button className="dashboard-logout" onClick={handleLogout}>
-          <FiLogOut size={18} />
-          <span>Logout</span>
-        </button>
-      </aside>
+      </div>
 
-      <div className="dashboard-content">
-        <div key={location.pathname} className="fade-in">
-          <Outlet />
+      {sidebarOpen && (
+        <div
+          className="dashboard-backdrop"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar + page content */}
+      <div className="dashboard-main">
+        <aside className={`dashboard-sidebar ${sidebarOpen ? 'is-open' : ''}`}>
+          <div className="dashboard-brand">
+            <button
+              type="button"
+              className="dashboard-sidebar-close"
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close menu"
+            >
+              <FiX size={20} />
+            </button>
+          </div>
+
+          <nav className="dashboard-nav">
+            {navItems.map(({ to, label, icon: Icon, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className="dashboard-nav-link"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Icon size={18} />
+                <span>{label}</span>
+              </NavLink>
+            ))}
+          </nav>
+
+          <button className="dashboard-logout" onClick={handleLogout}>
+            <FiLogOut size={18} />
+            <span>Logout</span>
+          </button>
+        </aside>
+
+        <div className="dashboard-content">
+          <div key={location.pathname} className="fade-in">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

@@ -25,10 +25,10 @@ import ForgotPassword from './pages/Auth/ForgotPassword';
 import ResetPassword from './pages/Auth/ResetPassword';
 
 import CandidateOverview from './pages/CandidateDashboard/Overview';
+import CandidateViewProfile from './pages/CandidateDashboard/ViewProfile';
 import CandidateEditProfile from './pages/CandidateDashboard/EditProfile';
 import CandidateNotifications from './pages/CandidateDashboard/Notifications';
-import MyApplications from './pages/CandidateDashboard/MyApplications';
-import CandidateHires from './pages/CandidateDashboard/Hires';
+import CandidateHistory from './pages/CandidateDashboard/History';
 import SubscriptionPage from './pages/Subscription/SubscriptionPage';
 import CareerAssistant from './pages/CareerAssistant/CareerAssistant';
 import ATSResumeChecker from './pages/ATSResumeChecker/ATSResumeChecker';
@@ -36,9 +36,10 @@ import Messages from './pages/Messages/Messages';
 import Interviews from './pages/Interviews/Interviews';
 
 import CompanyOverview from './pages/CompanyDashboard/Overview';
+import CompanyViewProfile from './pages/CompanyDashboard/ViewProfile';
 import CompanyEditProfile from './pages/CompanyDashboard/EditProfile';
 import CompanyBookmarks from './pages/CompanyDashboard/Bookmarks';
-import CompanyHires from './pages/CompanyDashboard/Hires';
+import CompanyHistory from './pages/CompanyDashboard/History';
 import CompanyNotifications from './pages/CompanyDashboard/Notifications';
 import MyJobs from './pages/CompanyDashboard/MyJobs';
 import PostJob from './pages/CompanyDashboard/PostJob';
@@ -89,10 +90,10 @@ export default function App() {
       <Route element={<ProtectedRoute roles={['candidate']} />}>
         <Route path="/candidate/dashboard" element={<DashboardLayout />}>
           <Route index element={<CandidateOverview />} />
-          <Route path="profile" element={<CandidateEditProfile />} />
+          <Route path="profile" element={<CandidateViewProfile />} />
+          <Route path="profile/edit" element={<CandidateEditProfile />} />
           <Route path="subscription" element={<SubscriptionPage />} />
-          <Route path="applications" element={<MyApplications />} />
-          <Route path="hires" element={<CandidateHires />} />
+          <Route path="history" element={<CandidateHistory />} />
           <Route path="career-assistant" element={<CareerAssistant />} />
           <Route path="ats-checker" element={<ATSResumeChecker />} />
           <Route path="messages" element={<Messages />} />
@@ -105,15 +106,16 @@ export default function App() {
       <Route element={<ProtectedRoute roles={['company']} />}>
         <Route path="/company/dashboard" element={<DashboardLayout />}>
           <Route index element={<CompanyOverview />} />
-          <Route path="profile" element={<CompanyEditProfile />} />
+          <Route path="profile" element={<CompanyViewProfile />} />
+          <Route path="profile/edit" element={<CompanyEditProfile />} />
           <Route path="subscription" element={<SubscriptionPage />} />
           <Route path="bookmarks" element={<CompanyBookmarks />} />
           <Route path="jobs" element={<MyJobs />} />
+          <Route path="history" element={<CompanyHistory />} />
           <Route path="jobs/new" element={<PostJob />} />
           <Route path="jobs/:id/edit" element={<PostJob />} />
           <Route path="jobs/:jobId/applicants" element={<JobApplicants />} />
           <Route path="jobs/:jobId/questions" element={<ManageQuestions />} />
-          <Route path="hires" element={<CompanyHires />} />
           <Route path="messages" element={<Messages />} />
           <Route path="interviews" element={<Interviews />} />
           <Route path="notifications" element={<CompanyNotifications />} />

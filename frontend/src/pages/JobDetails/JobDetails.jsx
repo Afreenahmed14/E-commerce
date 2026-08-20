@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import { FiMapPin, FiBriefcase, FiClock, FiUsers } from 'react-icons/fi';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { FiMapPin, FiBriefcase, FiClock, FiUsers, FiMessageSquare } from 'react-icons/fi';
 import { jobService } from '../../services/jobService';
 import { applicationService } from '../../services/applicationService';
 import { mcqService } from '../../services/mcqService';
+import { conversationService } from '../../services/conversationService';
 import { useAuth } from '../../hooks/useAuth';
 import { useAlert } from '../../context/AlertContext';
 import Card from '../../components/common/Card';
@@ -28,6 +29,7 @@ const formatSalary = (min, max, payType = 'yearly') => {
 
 export default function JobDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { isAuthenticated, role } = useAuth();
   const [job, setJob] = useState(null);
   const [hasApplied, setHasApplied] = useState(false);
@@ -35,6 +37,7 @@ export default function JobDetails() {
 const [applyOpen, setApplyOpen] = useState(false);
   const [coverLetter, setCoverLetter] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [messaging, setMessaging] = useState(false);
   const { showError, showSuccess } = useAlert();
   const [loginRequired, setLoginRequired] = useState(false);
   // Feature 5 — application questionnaire
@@ -111,6 +114,20 @@ const handleApplyClick = async () => {
     }
   };
 
+  const handleMessageCompany = async () => {
+    if (!isAuthenticated) { setLoginRequired(true); return; }
+    if (role !== 'candidate') return;
+    setMessaging(true);
+    try {
+      const res = await conversationService.start({ companyId: job.companyId?._id, jobId: id });
+      navigate(`/candidate/dashboard/messages?conv=${res.data.conversation._id}`);
+    } catch (err) {
+      showError(err.response?.data?.message || 'Could not start conversation.');
+    } finally {
+      setMessaging(false);
+    }
+  };
+
   if (role === 'company') return <Navigate to="/company/dashboard/jobs" replace />;
   if (loading) return <Loader fullPage label="Loading job…" />;
   if (!job) return <div className="container section"><p>Job not found.</p></div>;
@@ -165,6 +182,11 @@ const handleApplyClick = async () => {
           ) : (
             <Button onClick={handleApplyClick} disabled={isAuthenticated && !isCandidate}>
               {isAuthenticated && !isCandidate ? 'Only engineers can apply' : 'Apply Now'}
+            </Button>
+          )}
+          {(!isAuthenticated || isCandidate) && (
+            <Button variant="secondary" onClick={handleMessageCompany} loading={messaging}>
+              <FiMessageSquare /> Message Company
             </Button>
           )}
         </div>

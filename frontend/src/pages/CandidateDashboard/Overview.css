@@ -225,56 +225,193 @@
 
 /* ===== Profile Summary ===== */
 
-.overview-profile-summary {
+.overview-profile-outer {
+  background: var(--color-primary-light);
+  border-radius: var(--radius-lg);
   padding: var(--space-5);
   margin-bottom: var(--space-6);
 }
 
 .overview-profile-title {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
   font-size: var(--font-size-lg);
   font-weight: 700;
+  color: var(--color-primary);
 }
 
-.overview-profile-info {
+.overview-profile-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1.1fr 1fr 1fr;
+  grid-template-rows: auto auto;
   gap: var(--space-5);
-  margin-bottom: var(--space-5);
 }
 
-.overview-profile-item {
+.overview-pcard-id { grid-row: 1 / 3; }
+.overview-pcard-about { grid-column: 2; grid-row: 1; }
+.overview-pcard-experience { grid-column: 3; grid-row: 1 / 3; }
+.overview-pcard-headline { grid-column: 2; grid-row: 2; }
+.overview-pcard-skills { grid-column: 1 / 3; }
+
+@media (max-width: 900px) {
+  .overview-profile-grid {
+    grid-template-columns: 1fr;
+  }
+  .overview-pcard-id,
+  .overview-pcard-about,
+  .overview-pcard-experience,
+  .overview-pcard-headline,
+  .overview-pcard-skills {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+.overview-pcard {
+  padding: var(--space-5);
+  opacity: 0;
+  transform: translateY(14px);
+  animation: overviewPCardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: var(--radius-lg);
+  border: none;
+  box-shadow: 0 2px 8px -4px rgba(15, 23, 42, 0.12);
+}
+
+.overview-pcard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -12px rgba(37, 99, 235, 0.25);
+}
+
+.overview-pcard-id { background: #eaf2ff; }
+.overview-pcard-about { background: #eafaf0; }
+.overview-pcard-experience { background: #f3ecfe; }
+.overview-pcard-headline { background: #fff4e5; }
+.overview-pcard-skills { background: #e8f9fb; }
+
+[data-theme='dark'] .overview-pcard-id { background: rgba(37, 99, 235, 0.12); }
+[data-theme='dark'] .overview-pcard-about { background: rgba(22, 163, 74, 0.12); }
+[data-theme='dark'] .overview-pcard-experience { background: rgba(124, 58, 237, 0.14); }
+[data-theme='dark'] .overview-pcard-headline { background: rgba(217, 119, 6, 0.14); }
+[data-theme='dark'] .overview-pcard-skills { background: rgba(6, 182, 212, 0.12); }
+
+.overview-profile-grid.stagger-children .overview-pcard:nth-child(1) { animation-delay: 40ms; }
+.overview-profile-grid.stagger-children .overview-pcard:nth-child(2) { animation-delay: 110ms; }
+.overview-profile-grid.stagger-children .overview-pcard:nth-child(3) { animation-delay: 180ms; }
+.overview-profile-grid.stagger-children .overview-pcard:nth-child(4) { animation-delay: 250ms; }
+.overview-profile-grid.stagger-children .overview-pcard:nth-child(5) { animation-delay: 320ms; }
+
+@keyframes overviewPCardIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overview-pcard-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  animation: overviewAvatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
 }
 
-.overview-profile-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+@keyframes overviewAvatarPop {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-.overview-profile-item strong {
+.overview-pcard-name {
   font-size: var(--font-size-md);
+  font-weight: 700;
   color: var(--color-text);
 }
 
-.overview-profile-headline {
-  margin-bottom: var(--space-5);
+.overview-pcard-role {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
 }
 
-.overview-profile-headline p {
-  margin-top: 6px;
-  margin-bottom: 0;
-}
-
-.overview-profile-skills {
+.overview-pcard-meta {
   display: flex;
   flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border, rgba(0,0,0,0.08));
+}
+
+.overview-pcard-meta-row {
+  display: flex;
+  align-items: center;
   gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.overview-pcard-meta-row svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.overview-pcard-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+
+.overview-pcard-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: transform 0.25s ease;
+}
+
+.overview-pcard:hover .overview-pcard-icon {
+  transform: rotate(8deg) scale(1.08);
+}
+
+.overview-pcard-icon-green { background: var(--color-success); }
+.overview-pcard-icon-purple { background: #7c3aed; }
+.overview-pcard-icon-orange { background: var(--color-warning); }
+.overview-pcard-icon-blue { background: var(--color-primary); }
+
+.overview-pcard-text {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.overview-pcard-headline-text {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.overview-pcard-experience-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.overview-pcard-experience-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
 }
 
 .overview-profile-skill-list {
@@ -283,8 +420,19 @@
   gap: var(--space-2);
 }
 
-@media (max-width: 600px) {
-  .overview-profile-info {
-    grid-template-columns: 1fr;
-  }
+.overview-skill-badge {
+  display: inline-flex;
+  opacity: 0;
+  animation: overviewSkillIn 0.4s ease forwards;
+}
+
+@keyframes overviewSkillIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.overview-pcard-id .overview-pcard-avatar,
+.overview-pcard-id .overview-pcard-name,
+.overview-pcard-id .overview-pcard-role {
+  text-align: left;
 }

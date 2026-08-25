@@ -1,19 +1,28 @@
 require("dotenv").config();
-const { GoogleGenAI } = require("@google/genai");
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+const Groq = require("groq-sdk");
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 async function main() {
   try {
-    const models = await ai.models.list();
+    console.log(
+      "GROQ_API_KEY:",
+      process.env.GROQ_API_KEY ? "Loaded ✅" : "Missing ❌"
+    );
 
-    for await (const model of models) {
-      console.log(model.name);
+    const models = await groq.models.list();
+
+    console.log("\nAvailable Groq models:\n");
+
+    for (const model of models.data) {
+      console.log(model.id);
     }
   } catch (err) {
-    console.error(err);
+    console.error("\nGroq model list error:");
+    console.error(err.message);
   }
 }
 

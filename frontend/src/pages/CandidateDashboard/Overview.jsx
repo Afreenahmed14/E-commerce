@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiEye, FiStar, FiShield, FiCode, FiCpu, FiServer, FiPenTool, FiCloud } from 'react-icons/fi';
+import { FiEye, FiStar, FiShield, FiCode, FiCpu, FiServer, FiPenTool, FiCloud, FiMail, FiPhone, FiMapPin, FiCalendar, FiUser, FiBriefcase, FiTag } from 'react-icons/fi';
 import { FaRupeeSign } from "react-icons/fa";
 import { candidateService } from '../../services/candidateService';
 import { jobService } from '../../services/jobService';
@@ -37,6 +37,13 @@ export default function CandidateOverview() {
   if (loading) return <Loader label="Loading your dashboard…" />;
 
   const profileComplete = Boolean(candidate?.headline && candidate?.about && candidate?.skills?.length);
+
+  const locationText = [candidate?.location?.city, candidate?.location?.state, candidate?.location?.country]
+    .filter(Boolean).join(', ');
+  const joinedText = candidate?.createdAt
+    ? new Date(candidate.createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
+    : null;
+  const initial = candidate?.name ? candidate.name.trim().charAt(0).toUpperCase() : 'U';
 
   return (
     <div>
@@ -115,48 +122,90 @@ export default function CandidateOverview() {
         )}
       </div>
 
-      <Card className="overview-profile-summary">
-        <h3 className="overview-profile-title">Profile Summary</h3>
+      <div className="overview-profile-outer">
+      <div className="overview-profile-title">Profile Summary</div>
 
-        <div className="overview-profile-info">
-          <div className="overview-profile-item">
-            <span className="overview-profile-label">Candidate Name</span>
-            <strong>{candidate?.name || 'Name not added'}</strong>
+      <div className="overview-profile-grid stagger-children">
+        <Card className="overview-pcard overview-pcard-id">
+          <div className="overview-pcard-avatar">{initial}</div>
+          <div className="overview-pcard-name">{candidate?.name || 'Name not added'}</div>
+          <div className="overview-pcard-role">Candidate</div>
+
+          <div className="overview-pcard-meta">
+            {candidate?.email && (
+              <div className="overview-pcard-meta-row">
+                <FiMail size={15} /> <span>{candidate.email}</span>
+              </div>
+            )}
+            {candidate?.phone && (
+              <div className="overview-pcard-meta-row">
+                <FiPhone size={15} /> <span>{candidate.phone}</span>
+              </div>
+            )}
+            {locationText && (
+              <div className="overview-pcard-meta-row">
+                <FiMapPin size={15} /> <span>{locationText}</span>
+              </div>
+            )}
+            {joinedText && (
+              <div className="overview-pcard-meta-row">
+                <FiCalendar size={15} /> <span>Joined on {joinedText}</span>
+              </div>
+            )}
           </div>
+        </Card>
 
-          <div className="overview-profile-item">
-            <span className="overview-profile-label">Experience</span>
-            <strong>
-              {candidate?.experience || 0} years
-              {candidate?.experienceMonths
-                ? ` ${candidate.experienceMonths} months`
-                : ''}
-            </strong>
+        <Card className="overview-pcard overview-pcard-about">
+          <div className="overview-pcard-heading">
+            <span className="overview-pcard-icon overview-pcard-icon-green"><FiUser size={15} /></span>
+            About Me
           </div>
-        </div>
-
-        <div className="overview-profile-headline">
-          <span className="overview-profile-label">Headline</span>
-          <p className="text-muted">
-            {candidate?.headline ||
-              'No headline yet — add one so companies know what you do.'}
+          <p className="text-muted overview-pcard-text">
+            {candidate?.about || 'No “about” added yet — tell companies a bit about yourself.'}
           </p>
-        </div>
+        </Card>
 
-        <div className="overview-profile-skills">
-          <span className="overview-profile-label">Skills</span>
+        <Card className="overview-pcard overview-pcard-experience">
+          <div className="overview-pcard-heading">
+            <span className="overview-pcard-icon overview-pcard-icon-purple"><FiBriefcase size={15} /></span>
+            Experience
+          </div>
+          <div className="overview-pcard-experience-value">
+            {candidate?.experience || 0} years
+            {candidate?.experienceMonths ? ` ${candidate.experienceMonths} months` : ''}
+          </div>
+          <div className="overview-pcard-experience-label">Total Experience</div>
+        </Card>
 
+        <Card className="overview-pcard overview-pcard-headline">
+          <div className="overview-pcard-heading">
+            <span className="overview-pcard-icon overview-pcard-icon-orange"><FiTag size={15} /></span>
+            Headline
+          </div>
+          <p className="overview-pcard-text overview-pcard-headline-text">
+            {candidate?.headline || 'No headline yet — add one so companies know what you do.'}
+          </p>
+        </Card>
+
+        <Card className="overview-pcard overview-pcard-skills">
+          <div className="overview-pcard-heading">
+            <span className="overview-pcard-icon overview-pcard-icon-blue"><FiCode size={15} /></span>
+            Skills
+          </div>
           <div className="overview-profile-skill-list">
             {(candidate?.skills || []).length > 0 ? (
-              candidate.skills.map((skill) => (
-                <Badge key={skill}>{skill}</Badge>
+              candidate.skills.map((skill, i) => (
+                <span key={skill} className="overview-skill-badge" style={{ animationDelay: `${i * 35}ms` }}>
+                  <Badge>{skill}</Badge>
+                </span>
               ))
             ) : (
               <span className="text-muted">No skills added yet.</span>
             )}
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
+      </div>
     </div>
   );
 }

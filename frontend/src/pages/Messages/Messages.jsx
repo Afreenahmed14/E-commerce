@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { FiSend, FiPaperclip, FiSearch, FiBellOff, FiBell, FiTrash2, FiSmile } from 'react-icons/fi';
+import { FiSend, FiPaperclip, FiSearch, FiBellOff, FiBell, FiTrash2, FiSmile, FiCheck } from 'react-icons/fi';
 import { conversationService } from '../../services/conversationService';
 import { useAuth } from '../../hooks/useAuth';
+import { useSocket } from '../../hooks/useSocket';
 import { useAlert } from '../../context/AlertContext';
 import { getAccessToken } from '../../services/api';
 import Button from '../../components/common/Button';
@@ -17,6 +18,7 @@ const EMOJIS = ['👍', '❤️', '😂', '🎉', '🔥', '👏', '🙏', '💪'
 
 export default function Messages() {
   const { user, role } = useAuth();
+  const { onlineUsers } = useSocket() || {};
   const { showError } = useAlert();
   const [searchParams, setSearchParams] = useSearchParams();
   const [conversations, setConversations] = useState([]);
@@ -212,18 +214,22 @@ export default function Messages() {
           ) : (
             filtered.map((c) => {
               const name = c.other?.name || c.other?.companyName || 'Unknown';
+              const isOnline = !!onlineUsers?.[c.other?._id];
               return (
                 <div
                   key={c._id}
                   className={`messages-conv ${activeId === c._id ? 'active' : ''}`}
                   onClick={() => openConversation(c._id)}
                 >
-                  <div className="messages-avatar">
-                    {c.other?.profileImage || c.other?.logo ? (
-                      <img src={c.other?.profileImage || c.other?.logo} alt="" />
-                    ) : (
-                      name[0]?.toUpperCase()
-                    )}
+                  <div className="messages-avatar-wrap">
+                    <div className="messages-avatar">
+                      {c.other?.profileImage || c.other?.logo ? (
+                        <img src={c.other?.profileImage || c.other?.logo} alt="" />
+                      ) : (
+                        name[0]?.toUpperCase()
+                      )}
+                    </div>
+                    {isOnline && <span className="messages-online-dot" />}
                   </div>
                   <div className="messages-conv-info">
                     <strong>{name}</strong>
@@ -243,13 +249,29 @@ export default function Messages() {
         ) : (
           <>
             <div className="messages-header">
-              <div>
-                <strong>{otherName}</strong>
-                {showTyping ? (
-                  <span className="messages-typing">typing…</span>
-                ) : (
-                  <span className="text-muted">{activeConv?.other?.headline || ''}</span>
-                )}
+              <div className="messages-header-identity">
+                <div className="messages-avatar-wrap">
+                  <div className="messages-avatar messages-avatar-lg">
+                    {activeConv?.other?.profileImage || activeConv?.other?.logo ? (
+                      <img src={activeConv?.other?.profileImage || activeConv?.other?.logo} alt="" />
+                    ) : (
+                      otherName[0]?.toUpperCase()
+                    )}
+                  </div>
+                  {onlineUsers?.[activeConv?.other?._id] && <span className="messages-online-dot" />}
+                </div>
+                <div>
+                  <strong>{otherName}</strong>
+                  {showTyping ? (
+                    <span className="messages-typing">typing…</span>
+                  ) : onlineUsers?.[activeConv?.other?._id] ? (
+                    <span className="messages-online-label">
+                      <span className="messages-online-label-dot" /> Online
+                    </span>
+                  ) : (
+                    <span className="text-muted">{activeConv?.other?.headline || ''}</span>
+                  )}
+                </div>
               </div>
               <div className="messages-header-actions">
                 <button className="messages-icon-btn" onClick={() => toggleMute(activeId)} title="Mute/Unmute">
@@ -262,6 +284,8 @@ export default function Messages() {
             </div>
 
             <div className="messages-thread" ref={scrollRef}>
+              <div className="messages-thread-decor-dots" aria-hidden="true" />
+              <div className="messages-thread-decor-sparkle" aria-hidden="true" />
               {messages.length === 0 ? (
                 <div className="messages-empty-thread text-muted">Send the first message!</div>
               ) : (
@@ -280,7 +304,7 @@ export default function Messages() {
                         )}
                         <span className="messages-time text-muted">
                           {formatRelativeTime(m.createdAt)}
-                          {mine && m.readBy && <span className="messages-read"> ✓✓</span>}
+                          {mine && <FiCheck className={`messages-check ${m.readBy ? 'read' : ''}`} />}
                         </span>
                       </div>
                     </div>

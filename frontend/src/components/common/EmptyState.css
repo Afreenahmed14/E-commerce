@@ -1,10 +1,25 @@
 .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   padding: var(--space-10) var(--space-5);
   color: var(--color-text-muted);
+  animation: emptyStateIn 0.4s ease both;
+}
+
+@keyframes emptyStateIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .empty-state h3 {
   color: var(--color-text);
-  margin-bottom: var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-lg);
+}
+
+.empty-state p {
+  margin: 0;
+  max-width: 320px;
 }

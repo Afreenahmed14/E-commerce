@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiCheckCircle, FiAlertCircle, FiArrowRight, FiXCircle, FiShield } from 'react-icons/fi';
+import { FaCrown, FaBriefcase, FaPhoneAlt, FaUsers, FaCalendarAlt } from 'react-icons/fa';
 import { subscriptionService } from '../../services/subscriptionService';
 import { useAuth } from '../../hooks/useAuth';
 import { useAlert } from '../../context/AlertContext';
@@ -19,6 +20,17 @@ const QUOTA_LABELS = {
   jobPosts: 'Job posts',
   hires: 'Hires',
 };
+
+// Icon + accent color for each quota key, used on the stat cards.
+const QUOTA_META = {
+  jobApplications: { icon: FaBriefcase, tone: 'blue' },
+  interviewCalls: { icon: FaPhoneAlt, tone: 'orange' },
+  projectPartnerRequests: { icon: FaUsers, tone: 'green' },
+  jobPosts: { icon: FaBriefcase, tone: 'blue' },
+  hires: { icon: FaUsers, tone: 'green' },
+};
+
+const TONES = ['blue', 'orange', 'green', 'purple'];
 
 /**
  * Lets the account see its current product/tier + rolling-window quota
@@ -74,64 +86,125 @@ export default function SubscriptionPage() {
   const productLabel = status?.product ? (catalog[status.product] || SUBSCRIPTION_CATALOG[status.product])?.label : null;
   const quotaEntries = Object.entries(status?.quotas || {});
 
+  // Build the row of stat cards: profile edits (if capped) + each quota + renewal date.
+  const statCards = [];
+  if (status?.profileEditLimit !== null) {
+    statCards.push({
+      key: 'profileEdits',
+      icon: FaBriefcase,
+      label: 'Profile edits',
+      value: status?.profileEditLimit === undefined || status?.profileEditLimit === null
+        ? null
+        : status?.profileEditCount || 0,
+      total: status?.profileEditLimit,
+      caption: status?.profileEditLimit === undefined || status?.profileEditLimit === null
+        ? 'Unlimited edits'
+        : 'edits used',
+    });
+  }
+  quotaEntries.forEach(([key, q]) => {
+    const meta = QUOTA_META[key] || { icon: FaBriefcase, tone: 'blue' };
+    statCards.push({
+      key,
+      icon: meta.icon,
+      label: QUOTA_LABELS[key] || key,
+      value: q.used,
+      total: q.limit,
+      caption: q.limit === null
+        ? 'Unlimited'
+        : q.windowDays
+          ? `Used per ${q.windowDays} days`
+          : 'used',
+    });
+  });
+
   return (
     <div>
       <div className="dashboard-header"><h1>Subscription</h1></div>
 
-      <Card className="sub-status-card">
-        <div className="sub-status-top">
-          <div>
-            <p className="text-muted" style={{ marginBottom: 4 }}>
-              {productLabel}
-            </p>
-            <h2 style={{ textTransform: 'capitalize' }}>{status?.name}</h2>
+      <Card className="sub-hero-card">
+        <div className="sub-hero-decor" aria-hidden="true" />
+        <div className="sub-hero-left">
+          <div className="sub-hero-icon">
+            <FaCrown size={26} />
           </div>
-          {!isFree && (
+          <div>
+            {productLabel && <p className="sub-hero-product">{productLabel}</p>}
+            <h2 className="sub-hero-name">{status?.name}</h2>
+            <p className="text-muted sub-hero-caption">Your current subscription plan</p>
+          </div>
+        </div>
+
+        {!isFree && (
+          <div className="sub-hero-right">
+            <div className="sub-hero-divider" />
             <span className={`sub-status-badge ${status?.isActive ? 'active' : 'inactive'}`}>
               {status?.isActive ? <FiCheckCircle /> : <FiAlertCircle />}
               {status?.isActive ? 'Active' : status?.status}
             </span>
-          )}
+          </div>
+        )}
+      </Card>
+
+      <div className="sub-stats-grid">
+        {statCards.map((stat, i) => {
+          const Icon = stat.icon;
+          const tone = TONES[i % TONES.length];
+          return (
+            <Card key={stat.key} className={`sub-stat-card sub-stat-${tone}`}>
+              <div className="sub-stat-icon">
+                <Icon size={20} />
+              </div>
+              <p className="sub-stat-label">{stat.label}</p>
+              <p className="sub-stat-value">
+                {stat.value !== null && <span>{stat.value}</span>}
+                {stat.total ? <span className="sub-stat-total"> / {stat.total}</span> : null}
+              </p>
+              <div className="sub-stat-rule" />
+              <p className="sub-stat-caption">{stat.caption}</p>
+            </Card>
+          );
+        })}
+
+        {status?.endDate && (
+          <Card className="sub-stat-card sub-stat-purple">
+            <div className="sub-stat-icon">
+              <FaCalendarAlt size={20} />
+            </div>
+            <p className="sub-stat-label">Renews / Expires</p>
+            <p className="sub-stat-value sub-stat-date">{formatDate(status.endDate)}</p>
+            <div className="sub-stat-rule" />
+            <p className="sub-stat-caption">Your plan renewal date</p>
+          </Card>
+        )}
+      </div>
+
+      <Card className="sub-footer-card">
+        <div className="sub-footer-decor" aria-hidden="true" />
+        <div className="sub-footer-left">
+          <div className="sub-footer-icon">
+            <FiShield size={22} />
+          </div>
+          <div>
+            <h3 className="sub-footer-title">{isFree ? 'Unlock more' : "You're all set!"}</h3>
+            <p className="text-muted sub-footer-caption">
+              {isFree
+                ? 'Upgrade to a paid plan to get more out of HourlyRecruit.'
+                : 'Enjoy all the premium features and keep growing your career.'}
+            </p>
+          </div>
         </div>
 
-        <div className="sub-status-grid">
-          {status?.profileEditLimit !== null && (
-            <div>
-              <p className="text-muted">Profile edits</p>
-              <p>
-                {status?.profileEditLimit === undefined || status?.profileEditLimit === null
-                  ? 'Unlimited'
-                  : `${status?.profileEditCount || 0} / ${status?.profileEditLimit} used`}
-              </p>
-            </div>
-          )}
-
-          {quotaEntries.map(([key, q]) => (
-            <div key={key}>
-              <p className="text-muted">{QUOTA_LABELS[key] || key}</p>
-              <p>
-                {q.limit === null
-                  ? `${q.used} used · Unlimited`
-                  : `${q.used} / ${q.limit} used${q.windowDays ? ` (per ${q.windowDays} days)` : ''}`}
-              </p>
-            </div>
-          ))}
-
-          {status?.endDate && (
-            <div>
-              <p className="text-muted">Renews / expires</p>
-              <p>{formatDate(status.endDate)}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="sub-status-actions">
+        <div className="sub-footer-actions">
           <Button onClick={() => setModalOpen(true)}>
+            <FaCrown size={14} style={{ marginRight: 8 }} />
             {isFree ? 'Upgrade plan' : 'Change plan'}
+            <FiArrowRight size={16} style={{ marginLeft: 8 }} />
           </Button>
           {!isFree && (
-            <Button variant="outline" loading={cancelling} onClick={handleCancel}>
-              Cancel & move to Free
+            <Button variant="outline" loading={cancelling} onClick={handleCancel} className="sub-cancel-btn">
+              <FiXCircle size={14} style={{ marginRight: 8 }} />
+              Cancel & Move to Free
             </Button>
           )}
         </div>

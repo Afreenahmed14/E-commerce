@@ -1,6 +1,14 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FiSearch, FiX } from 'react-icons/fi';
+import {
+  FiSearch, FiX, FiShield, FiZap, FiArrowRight, FiCheckCircle, FiGlobe,
+  FiGrid, FiList, FiAward, FiLock as FiLockIcon, FiUsers,
+} from 'react-icons/fi';
+import {
+  SiReact, SiNodedotjs, SiPython, SiDocker, SiKubernetes,
+  SiTypescript, SiMongodb, SiSpringboot,
+} from 'react-icons/si';
+import { FaAws, FaJava, FaDatabase } from 'react-icons/fa';
 import { candidateService } from '../../services/candidateService';
 import { companyService } from '../../services/companyService';
 import { taxonomyService } from '../../services/taxonomyService';
@@ -15,6 +23,30 @@ import CandidateCard from '../../components/common/CandidateCard';
 import { AVAILABILITY_OPTIONS } from '../../utils/constants';
 import { gsap, prefersReducedMotion } from '../../utils/gsapSetup';
 import './BrowseFreelancers.css';
+
+/* Quick-pick chips under the search bar — purely a fast way to set the
+   same `skill` filter the Filters panel already supports. Colored like
+   the Home page's tech marquee so each brand reads clearly. */
+const POPULAR_SKILLS_QUICK = [
+  { name: 'React', Icon: SiReact, color: '#149eca' },
+  { name: 'Node.js', Icon: SiNodedotjs, color: '#3c873a' },
+  { name: 'Python', Icon: SiPython, color: '#3776ab' },
+  { name: 'Java', Icon: FaJava, color: '#f89820' },
+  { name: 'AWS', Icon: FaAws, color: '#ff9900' },
+  { name: 'Docker', Icon: SiDocker, color: '#2496ed' },
+  { name: 'Kubernetes', Icon: SiKubernetes, color: '#326ce5' },
+  { name: 'SQL', Icon: FaDatabase, color: '#4479a1' },
+  { name: 'TypeScript', Icon: SiTypescript, color: '#3178c6' },
+  { name: 'MongoDB', Icon: SiMongodb, color: '#10b981' },
+  { name: 'Spring Boot', Icon: SiSpringboot, color: '#6db33f' },
+];
+
+const TRUST_STRIP_ITEMS = [
+  { icon: FiAward, tone: 'gold', title: 'Top 1% Engineers', sub: 'Pre-vetted and verified talent' },
+  { icon: FiShield, tone: 'blue', title: 'Secure & Confidential', sub: 'Your data is always protected' },
+  { icon: FiGlobe, tone: 'cyan', title: 'Global Talent', sub: 'Hire without borders' },
+  { icon: FiZap, tone: 'orange', title: 'Flexible Hiring', sub: 'Hourly, part-time or full-time' },
+];
 
 const INITIAL_FILTERS = {
   q: '', name: '', skill: '', category: '', minRate: '', maxRate: '', minExperience: '', maxExperience: '',
@@ -60,6 +92,7 @@ export default function BrowseFreelancers() {
   const [filters, setFilters] = useState(() => ({ ...INITIAL_FILTERS, skill: searchParams.get('skill') || '' }));
   const [sort, setSort] = useState('name');
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list' — display only, no data/logic change
   const [candidates, setCandidates] = useState([]);
   const [pagination, setPagination] = useState({ totalPages: 1 });
   const [loading, setLoading] = useState(true);
@@ -176,55 +209,44 @@ export default function BrowseFreelancers() {
   return (
     <div className="browse-page">
 
-      
-
       {/* Everything below — name search, filters, sort, results, cards —
           lives inside one unified panel so it reads as a single surface. */}
       <div className="browse-panel">
         <div className="container-section-browse-page-inner">
-          
-          {/* <p className="text-muted browse-subtitle">
-            Find skilled engineers by filtering expertise, hourly rate, availability, and location. Browse verified profiles and hire the right talent with confidence.
-          </p> */}
-          <div className="browse-filterbar">
-            <h1>Browse Engineers</h1>
-            <div className="filter-search-inline browse-name-search">
-              <FiSearch />
-              <input
-                placeholder="Search by name…"
-                value={filters.name}
-                onChange={(e) => updateFilter('name', e.target.value)}
-              />
-            </div>
-            <div className="top-search">
-        {/* Row 1: main search bar + Developer Type, outside the results panel */}
-        <div className="browse-quickbar">
-          
 
-          <FilterDropdown
-            label="Developer Type"
-            summary={categoryLabel}
-            active={!!filters.category}
-            onClear={() => setFilters((f) => ({ ...f, category: '', skill: '' }))}
-          >
-            <div className="filter-option-list">
-              {categoryGroups.map((g) => (
-                <button
-                  type="button"
-                  key={g.name}
-                  className={`filter-option ${filters.category === g.name ? 'is-selected' : ''}`}
-                  onClick={() => {
-                    setPage(1);
-                    setFilters((f) => ({ ...f, category: g.name, skill: g.skills }));
-                  }}
-                >
-                  {g.name}
-                </button>
-              ))}
-            </div>
-          </FilterDropdown>
-        </div>
-      </div>
+          <div className="browse-search-card">
+            <div className="browse-filterbar">
+              <div className="filter-search-inline browse-name-search">
+                <FiSearch />
+                <input
+                  placeholder="Search by name, skill, or keyword…"
+                  value={filters.name}
+                  onChange={(e) => updateFilter('name', e.target.value)}
+                />
+              </div>
+
+              <FilterDropdown
+                label="Developer Type"
+                summary={categoryLabel}
+                active={!!filters.category}
+                onClear={() => setFilters((f) => ({ ...f, category: '', skill: '' }))}
+              >
+                <div className="filter-option-list">
+                  {categoryGroups.map((g) => (
+                    <button
+                      type="button"
+                      key={g.name}
+                      className={`filter-option ${filters.category === g.name ? 'is-selected' : ''}`}
+                      onClick={() => {
+                        setPage(1);
+                        setFilters((f) => ({ ...f, category: g.name, skill: g.skills }));
+                      }}
+                    >
+                      {g.name}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
 
             <div className="browse-filterbar-actions">
               <FilterDropdown
@@ -341,8 +363,92 @@ export default function BrowseFreelancers() {
                   ))}
                 </div>
               </FilterDropdown>
+
+                <button type="button" className="browse-search-btn" onClick={() => setPage(1)}>
+                  <FiSearch size={16} /> Search
+                </button>
+              </div>
+            </div>
+
+            <div className="popular-skills-row">
+              <span className="popular-skills-row-label">Popular Skills:</span>
+              <div className="popular-skills-row-chips">
+                {POPULAR_SKILLS_QUICK.map(({ name, Icon, color }) => (
+                  <button
+                    type="button"
+                    key={name}
+                    className={`popular-skill-chip ${filters.skill === name ? 'is-selected' : ''}`}
+                    style={{ '--tech-color': color }}
+                    onClick={() => updateFilter('skill', filters.skill === name ? '' : name)}
+                  >
+                    <Icon size={14} /> {name}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className="popular-skill-chip popular-skill-chip-viewall"
+                  onClick={() => updateFilter('skill', '')}
+                >
+                  View All <FiArrowRight size={13} />
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* ---------- Hero banner (below the search card) ---------- */}
+          <section className="browse-hero">
+            <div className="browse-hero-decor" aria-hidden="true">
+              <span className="browse-hero-particle bhp1" />
+              <span className="browse-hero-particle bhp2" />
+            </div>
+            <div className="browse-hero-inner">
+              <div className="browse-hero-content">
+                <span className="browse-hero-badge">🚀 Trusted by 800+ companies worldwide</span>
+                <h1 className="browse-hero-title">
+                  Browse Talented <span className="browse-hero-title-accent">Engineers</span>
+                </h1>
+                <p className="browse-hero-subtitle">
+                  Find, connect, and hire the best engineers for your next big idea.
+                </p>
+
+                <div className="browse-hero-chips">
+                  <div className="browse-hero-chip">
+                    <span className="browse-hero-chip-icon browse-hero-chip-icon--green"><FiCheckCircle size={18} /></span>
+                    <span className="browse-hero-chip-copy"><strong>Verified Talent</strong><small>Quality Assured</small></span>
+                  </div>
+                  <div className="browse-hero-chip">
+                    <span className="browse-hero-chip-icon browse-hero-chip-icon--purple"><FiZap size={18} /></span>
+                    <span className="browse-hero-chip-copy"><strong>Flexible Hiring</strong><small>On-Demand</small></span>
+                  </div>
+                  <div className="browse-hero-chip">
+                    <span className="browse-hero-chip-icon browse-hero-chip-icon--orange"><FiLockIcon size={18} /></span>
+                    <span className="browse-hero-chip-copy"><strong>Secure Payments</strong><small>Safe &amp; Reliable</small></span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="browse-hero-visual" aria-hidden="true">
+                <span className="browse-hero-doodle browse-hero-doodle-left">
+                  Great<br />Engineers<br />Build<br />Great Products
+                </span>
+                <div className="browse-hero-avatar">
+                  <FiUsers size={40} />
+                </div>
+                <div className="browse-hero-cta">
+                  <FiZap size={16} /> Hire Smarter, Build Faster <FiArrowRight size={16} />
+                </div>
+                <div className="browse-hero-stat-card">
+                  <div className="browse-hero-stat-avatars">
+                    <span className="browse-hero-stat-avatar" style={{ background: '#fbbf24' }} />
+                    <span className="browse-hero-stat-avatar" style={{ background: '#60a5fa' }} />
+                    <span className="browse-hero-stat-avatar" style={{ background: '#34d399' }} />
+                    <span className="browse-hero-stat-avatar browse-hero-stat-avatar-more">+</span>
+                  </div>
+                  <span className="browse-hero-stat-copy"><strong>5000+</strong><small>Skilled Engineers</small></span>
+                </div>
+              </div>
+            </div>
+          </section>
 
           {filters.category && (
             <div className="active-skill-chip">
@@ -360,9 +466,29 @@ export default function BrowseFreelancers() {
           {/* Results count */}
           <div className="browse-shell">
             <div className="browse-toolbar">
-              <span className="browse-results-count">
-                {loading ? 'Searching…' : `${pagination.total ?? candidates.length} engineer${(pagination.total ?? candidates.length) === 1 ? '' : 's'} found`}
-              </span>
+              <div className="browse-toolbar-left">
+                <span className="browse-results-count">
+                  {loading ? 'Searching…' : `${pagination.total ?? candidates.length} engineer${(pagination.total ?? candidates.length) === 1 ? '' : 's'} found`}
+                </span>
+                <span className="browse-results-tagline">Real Talent. Real Opportunities.</span>
+              </div>
+
+              <div className="browse-view-toggle" role="group" aria-label="Result view">
+                <button
+                  type="button"
+                  className={`browse-view-btn ${viewMode === 'grid' ? 'is-active' : ''}`}
+                  onClick={() => setViewMode('grid')}
+                >
+                  <FiGrid size={15} /> Grid View
+                </button>
+                <button
+                  type="button"
+                  className={`browse-view-btn ${viewMode === 'list' ? 'is-active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                >
+                  <FiList size={15} /> List View
+                </button>
+              </div>
             </div>
 
             <div className="browse-card-scroll">
@@ -371,7 +497,7 @@ export default function BrowseFreelancers() {
               ) : candidates.length === 0 ? (
                 <EmptyState title="No engineers match your filters" description="Try widening your search criteria." />
               ) : (
-                <div className="candidate-grid" ref={gridRef}>
+                <div className={`candidate-grid ${viewMode === 'list' ? 'candidate-grid-list' : ''}`} ref={gridRef}>
                   {candidates.map((c) => (
                     <CandidateCard
                       key={c._id}
@@ -386,7 +512,27 @@ export default function BrowseFreelancers() {
             </div>
 
             {!loading && candidates.length > 0 && (
-              <Pagination page={page} totalPages={pagination.totalPages} onPageChange={setPage} />
+              <div className="browse-pagination-row">
+                <div className="browse-trust-strip-inline">
+                  {TRUST_STRIP_ITEMS.slice(0, 2).map(({ icon: Icon, tone, title, sub }) => (
+                    <div className={`browse-trust-item browse-trust-item--${tone}`} key={title}>
+                      <span className="browse-trust-icon"><Icon size={18} /></span>
+                      <span className="browse-trust-copy"><strong>{title}</strong><small>{sub}</small></span>
+                    </div>
+                  ))}
+                </div>
+
+                <Pagination page={page} totalPages={pagination.totalPages} onPageChange={setPage} />
+
+                <div className="browse-trust-strip-inline">
+                  {TRUST_STRIP_ITEMS.slice(2, 4).map(({ icon: Icon, tone, title, sub }) => (
+                    <div className={`browse-trust-item browse-trust-item--${tone}`} key={title}>
+                      <span className="browse-trust-icon"><Icon size={18} /></span>
+                      <span className="browse-trust-copy"><strong>{title}</strong><small>{sub}</small></span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>

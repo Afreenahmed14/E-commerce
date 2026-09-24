@@ -224,6 +224,32 @@ export default function DashboardLayout() {
             ))}
           </nav>
 
+          {/* Decorative mascot — only on the AI Career Assistant page, to
+              match its playful chat-companion branding. Every other
+              dashboard page keeps the plain nav + Logout. */}
+          {location.pathname.includes('career-assistant') && (
+            <div className="dashboard-sidebar-mascot" aria-hidden="true">
+              <span className="dashboard-sidebar-mascot-doodle">Your<br />AI Career<br />Companion</span>
+              <span className="dashboard-sidebar-mascot-bot"><FiCpu size={28} /></span>
+            </div>
+          )}
+
+          {/* Upsell card — only on the Subscription page, and only for
+              accounts still on the Free plan (nothing to upsell once
+              they've already upgraded). Scrolls to the existing Upgrade
+              Plan button rather than duplicating its logic. */}
+          {location.pathname.includes('/subscription') && (user?.subscription?.plan || 'free') === 'free' && (
+            <button
+              type="button"
+              className="dashboard-sidebar-upsell"
+              onClick={() => document.querySelector('.sub-footer-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+            >
+              <span className="dashboard-sidebar-upsell-icon"><FiAward size={22} /></span>
+              <span>Upgrade to<br />Unlock More<br />Opportunities</span>
+              <span className="dashboard-sidebar-upsell-arrow">→</span>
+            </button>
+          )}
+
           <button className="dashboard-logout" onClick={handleLogout}>
             <FiLogOut size={18} />
             <span>Logout</span>

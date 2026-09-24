@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import { FiSend, FiPlus, FiTrash2, FiPaperclip, FiMessageSquare } from 'react-icons/fi';
+import { FiSend, FiPlus, FiTrash2, FiPaperclip, FiMessageSquare, FiCpu, FiZap } from 'react-icons/fi';
 import { chatbotService, streamChatbot } from '../../services/chatbotService';
 import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
@@ -13,11 +13,11 @@ import './CareerAssistant.css';
 import 'highlight.js/styles/github-dark.css';
 
 const SUGGESTIONS = [
-  'Review my resume',
-  'Prepare me for a React interview',
+  'Improve my resume',
+  'Interview preparation tips',
   'How to negotiate salary?',
+  'Find the right job for me',
   'Write a cover letter for a Node.js job',
-  'What skills should I learn for a backend role?',
   'Give me 5 HR behavioral questions',
 ];
 
@@ -169,7 +169,11 @@ export default function CareerAssistant() {
         </Button>
         <div className="assistant-conv-list">
           {conversations.length === 0 ? (
-            <p className="text-muted assistant-empty">No conversations yet.</p>
+            <div className="assistant-empty">
+              <span className="assistant-empty-icon"><FiMessageSquare size={22} /></span>
+              <strong>No more chats yet</strong>
+              <p className="text-muted">Start a new conversation to get AI career guidance.</p>
+            </div>
           ) : (
             conversations.map((c) => (
               <div
@@ -191,8 +195,13 @@ export default function CareerAssistant() {
       <div className="assistant-main">
         {!activeId ? (
           <div className="assistant-welcome">
-            <h1>AI Career Assistant</h1>
-            <p className="text-muted">Resume review, interview prep, salary negotiation, career guidance — ask me anything recruitment-related.</p>
+            <div className="assistant-welcome-visual" aria-hidden="true">
+              <span className="assistant-welcome-bot"><FiCpu size={38} /></span>
+              <span className="assistant-welcome-orbit assistant-welcome-orbit-1"><FiMessageSquare size={16} /></span>
+              <span className="assistant-welcome-orbit assistant-welcome-orbit-2"><FiZap size={16} /></span>
+            </div>
+            <h1>Hi! I'm Your <span className="assistant-title-accent">AI Career Assistant</span></h1>
+            <p className="text-muted">Ask me anything about resumes, interview preparation, career growth, salaries, or job opportunities.</p>
             <div className="assistant-suggestions">
               {SUGGESTIONS.map((s) => (
                 <button key={s} className="assistant-suggestion" onClick={async () => {
@@ -203,6 +212,7 @@ export default function CareerAssistant() {
                 </button>
               ))}
             </div>
+            <span className="assistant-welcome-doodle">↖ Start a conversation and get expert guidance!</span>
           </div>
         ) : (
           <>

@@ -1,16 +1,25 @@
 import { useEffect, useState } from 'react';
-import { FiCheckCircle, FiAlertCircle, FiArrowRight, FiXCircle, FiShield } from 'react-icons/fi';
+import { FiCheckCircle, FiAlertCircle, FiArrowRight, FiXCircle, FiShield, FiCheck } from 'react-icons/fi';
 import { FaCrown, FaBriefcase, FaPhoneAlt, FaUsers, FaCalendarAlt } from 'react-icons/fa';
 import { subscriptionService } from '../../services/subscriptionService';
 import { useAuth } from '../../hooks/useAuth';
 import { useAlert } from '../../context/AlertContext';
-import { TIERS, SUBSCRIPTION_CATALOG, buildLiveCatalog } from '../../utils/constants';
+import { TIERS, PRODUCTS, SUBSCRIPTION_CATALOG, buildLiveCatalog } from '../../utils/constants';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
 import SubscriptionModal from '../../components/common/SubscriptionModal';
 import { formatDate } from '../../utils/formatters';
 import './SubscriptionPage.css';
+
+// Which product's plan cards to preview inline on this page. Candidates
+// have two products (picked via tabs inside the modal); the plain
+// Candidate product is the one shown here for a quick at-a-glance
+// comparison — opening "Upgrade Plan" still surfaces both via tabs.
+const PREVIEW_PRODUCT_BY_ROLE = {
+  candidate: PRODUCTS.CANDIDATE_BASIC,
+  company: PRODUCTS.COMPANY,
+};
 
 // Human-readable labels for each quota key returned by /subscription/status.
 const QUOTA_LABELS = {
@@ -39,7 +48,7 @@ const TONES = ['blue', 'orange', 'green', 'purple'];
  * account's own subscription, no role-specific data needed.
  */
 export default function SubscriptionPage() {
-  const { refreshUser } = useAuth();
+  const { refreshUser, role } = useAuth();
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -86,6 +95,10 @@ export default function SubscriptionPage() {
   const productLabel = status?.product ? (catalog[status.product] || SUBSCRIPTION_CATALOG[status.product])?.label : null;
   const quotaEntries = Object.entries(status?.quotas || {});
 
+  // Which product's tier cards to preview inline (see note above).
+  const previewProductId = status?.product || PREVIEW_PRODUCT_BY_ROLE[role] || PRODUCTS.CANDIDATE_BASIC;
+  const previewProduct = catalog[previewProductId] || SUBSCRIPTION_CATALOG[previewProductId];
+
   // Build the row of stat cards: profile edits (if capped) + each quota + renewal date.
   const statCards = [];
   if (status?.profileEditLimit !== null) {
@@ -120,7 +133,10 @@ export default function SubscriptionPage() {
 
   return (
     <div>
-      <div className="dashboard-header"><h1>Subscription</h1></div>
+      <div className="dashboard-header sub-header">
+        <h1>Subscription<span className="sub-title-accent"> Plans</span></h1>
+        <p className="text-muted">Manage your subscription and unlock more opportunities on HourlyRecruit.</p>
+      </div>
 
       <Card className="sub-hero-card">
         <div className="sub-hero-decor" aria-hidden="true" />
@@ -144,6 +160,11 @@ export default function SubscriptionPage() {
             </span>
           </div>
         )}
+
+        <div className="sub-hero-visual" aria-hidden="true">
+          <span className="sub-hero-doodle">Upgrade<br />Get More<br />Opportunities</span>
+          <span className="sub-hero-avatar"><FaCrown size={32} /></span>
+        </div>
       </Card>
 
       <div className="sub-stats-grid">
@@ -209,6 +230,41 @@ export default function SubscriptionPage() {
           )}
         </div>
       </Card>
+
+      {previewProduct?.tiers?.length > 0 && (
+        <div className="sub-plans-preview-grid">
+          {previewProduct.tiers.map((tier, i) => {
+            const isCurrent = status?.product === previewProductId && tier.id === status?.tier;
+            const tone = TONES[i % TONES.length];
+            return (
+              <Card key={tier.id} className={`sub-preview-card sub-preview-${tone} ${isCurrent ? 'is-current' : ''}`}>
+                {tier.badge && <span className="sub-preview-badge">{tier.badge}</span>}
+                {isCurrent && <span className="sub-preview-badge sub-preview-badge-current">Current Plan</span>}
+                <div className="sub-preview-top">
+                  <span className="sub-preview-icon"><FaCrown size={16} /></span>
+                  <div>
+                    <strong>{tier.name}</strong>
+                    <p className="text-muted">{tier.tagline || (i === 0 ? 'Get started with basic access.' : i === previewProduct.tiers.length - 1 ? 'For professionals and teams.' : 'For active job seekers.')}</p>
+                  </div>
+                </div>
+                <ul className="sub-preview-features">
+                  {tier.features.map((f) => (
+                    <li key={f}><FiCheck size={14} /> {f}</li>
+                  ))}
+                </ul>
+                <Button
+                  fullWidth
+                  variant={isCurrent ? 'outline' : tier.badge ? 'primary' : 'secondary'}
+                  disabled={isCurrent}
+                  onClick={() => setModalOpen(true)}
+                >
+                  {isCurrent ? 'Current Plan' : tier.id === TIERS.FREE ? 'Continue with Free' : `Get ${tier.name}`}
+                </Button>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       <SubscriptionModal open={modalOpen} onClose={handleModalClose} />
     </div>

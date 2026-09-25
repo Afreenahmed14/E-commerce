@@ -8,6 +8,24 @@ console.log("GROQ_API_KEY:", process.env.GROQ_API_KEY ? "Loaded ✅" : "Missing 
 console.log("GROQ_MODEL:", process.env.GROQ_MODEL || "Not Set");
 console.log("Current Working Directory:", process.cwd());
 
+const Groq = require("groq-sdk");
+
+const groqTest = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
+
+(async () => {
+  try {
+    await groqTest.models.list();
+    console.log("🔥 GROQ AUTH TEST: SUCCESS ✅");
+  } catch (error) {
+    console.error("🔥 GROQ AUTH TEST: FAILED ❌");
+    console.error("Status:", error.status);
+    console.error("Message:", error.message);
+  }
+})();
+
+
 const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 const express = require('express');

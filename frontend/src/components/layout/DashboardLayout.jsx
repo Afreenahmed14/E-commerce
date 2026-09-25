@@ -63,10 +63,21 @@ export default function DashboardLayout() {
   useEffect(() => { setSidebarOpen(false); }, [location.pathname]);
 
   // Stop the page underneath from scrolling while the sidebar overlay is open.
+  // useEffect(() => {
+  //   document.body.style.overflow = sidebarOpen ? 'hidden' : '';
+  //   return () => { document.body.style.overflow = ''; };
+  // }, [sidebarOpen]);
+
+
   useEffect(() => {
+  if (window.innerWidth <= 900) {
     document.body.style.overflow = sidebarOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [sidebarOpen]);
+  }
+
+  return () => {
+    document.body.style.overflow = '';
+  };
+}, [sidebarOpen]);
 
   useEffect(() => {
     if (role === 'candidate' && (user?.hourlyRate === null || user?.hourlyRate === undefined)) {

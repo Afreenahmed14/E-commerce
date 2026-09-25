@@ -5,6 +5,15 @@
    remaining height with no leftover white space beneath it.
    ========================================================= */
 
+/* .dashboard-shell {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #cfe8f5;
+  overflow: visible;
+} */
+
 .dashboard-shell {
   width: 100%;
   min-height: 100vh;
@@ -14,6 +23,15 @@
   overflow: visible;
 }
 
+/* .dashboard-main {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  align-items: stretch;
+  overflow: visible;
+} */
+
 .dashboard-main {
   width: 100%;
   flex: 1 1 auto;
@@ -21,9 +39,10 @@
   display: flex;
   align-items: stretch;
   overflow: visible;
+  position: relative;
 }
 
-.dashboard-sidebar {
+/* .dashboard-sidebar {
   width: 250px;
   min-width: 250px;
   max-width: 250px;
@@ -41,7 +60,49 @@
   align-self: flex-start;
   overflow: hidden;
   z-index: 50;
+} */
+
+.dashboard-sidebar {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+  flex: 0 0 250px;
+
+  background: linear-gradient(
+    180deg,
+    #dff3fc 0%,
+    #c7e8f7 55%,
+    #b8ddef 100%
+  );
+
+  border-right: 1px solid rgba(37, 99, 235, 0.18);
+
+  display: flex;
+  flex-direction: column;
+
+  padding: var(--space-3);
+  box-sizing: border-box;
+
+  position: sticky;
+  top: 0;
+
+  /*
+   * IMPORTANT:
+   * Do NOT give the sidebar a fixed 100vh height.
+   * Let the flex row stretch it to the height of the page content.
+   */
+  height: auto;
+  min-height: calc(100vh - var(--header-height));
+
+  /* Let it stretch with the dashboard row */
+  align-self: stretch;
+
+  overflow: hidden;
+
+  z-index: 50;
 }
+
+
 
 .dashboard-sidebar .dashboard-nav,
 .dashboard-sidebar .dashboard-logout,
@@ -234,7 +295,9 @@
   transform: translateY(-2px);
 }
 
-.dashboard-content {
+/* .dashboard-content {
+
+
   flex: 1 1 auto;
   width: auto;
   min-width: 0;
@@ -253,8 +316,56 @@
   background-repeat: no-repeat;
   background-attachment: local;
   color: #0b1220;
-}
+} */
+.dashboard-content {
+  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
 
+  min-height: calc(100vh - var(--header-height));
+
+  display: flex;
+  flex-direction: column;
+
+  max-width: 100%;
+
+  overflow: visible;
+
+  background-color: #cfe8f5;
+
+  background-image:
+    radial-gradient(
+      ellipse 220px 70px at 12% 10%,
+      rgba(255, 255, 255, 0.85),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 180px 60px at 30% 6%,
+      rgba(255, 255, 255, 0.7),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 260px 80px at 80% 14%,
+      rgba(255, 255, 255, 0.8),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 200px 65px at 95% 4%,
+      rgba(255, 255, 255, 0.6),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      #cfe8f5 0%,
+      #eaf5fb 55%,
+      #f4f8ff 100%
+    );
+
+  background-repeat: no-repeat;
+  background-attachment: local;
+
+  color: #0b1220;
+}
 .dashboard-topbar-desktop {
   position: relative;
   flex: 0 0 var(--header-height);
@@ -632,5 +743,33 @@
 
   .dashboard-topbar-desktop {
     padding: 0 var(--space-4);
+  }
+}
+@media (max-width: 900px) {
+  .dashboard-sidebar {
+    position: fixed;
+
+    top: 0;
+    bottom: 0;
+    left: -300px;
+
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
+
+    height: 100vh;
+    min-height: 100vh;
+
+    z-index: 50;
+
+    overflow-y: auto;
+
+    transition: left var(--transition);
+
+    box-shadow: var(--shadow-lg);
+  }
+
+  .dashboard-sidebar.is-open {
+    left: 0;
   }
 }
